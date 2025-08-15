@@ -7377,7 +7377,7 @@ var vstar_ai_summary_settings = {"home":{"is_active":0,"title_color":"#303030","
     --recharge-button-brand: var(--recharge-color-brand);
     --recharge-button-color: #FFFFFF;
   }
-  .omnisend-form-68679d2369d1f69a146d6ea1-overlay{
+  .omnisend-form-68679d2369d1f69a146d6ea1-overlay, .omnisend-form-68679d2369d1f69a146d6ea1-content, .omnisend-form-68679d2369d1f69a146d6ea1-content-inner, .omnisend-form-68679d2369d1f69a146d6ea1-close-button{
     display: none !important;
   }
 </style>
@@ -7543,6 +7543,627 @@ window.addEventListener('load', () => {
     setTimeout(completeShopPayBlocker, 1000);
     setTimeout(completeShopPayBlocker, 2000);
     setTimeout(completeShopPayBlocker, 5000);});
+
+</script>
+
+<script>
+
+// Enhanced Silvervine Sticks Variant-based URL redirect and price management system
+// Now includes Subscribe & Save and One-time purchase options
+
+class SilvervineVariantManager {
+    constructor() {
+        // Variant URLs mapping based on variant IDs and purchase type
+        this.variantUrls = {
+            // One-time purchases
+            onetime: {
+                '41858290679865': 'https://example.com/3pc-2free-onetime-checkout', // 3 Pc + 2 FREE One-time
+                '43418249986105': 'https://example.com/2pc-onetime-checkout',        // 2 Pc One-time
+                '43418250018873': 'https://example.com/1pc-onetime-checkout'         // 1 Pc One-time
+            },
+            // Subscription purchases
+            subscription: {
+                '41858290679865': 'https://example.com/3pc-2free-subscription-checkout', // 3 Pc + 2 FREE Subscribe
+                '43418249986105': 'https://example.com/2pc-subscription-checkout',        // 2 Pc Subscribe
+                '43418250018873': 'https://example.com/1pc-subscription-checkout'         // 1 Pc Subscribe
+            }
+        };
+        
+        // Custom price mapping for one-time purchases
+        this.onetimePriceMapping = {
+            '41858290679865': '£29.95', // 3 Pc + 2 FREE
+            '43418249986105': '£39.95', // 2 Pc
+            '43418250018873': '£49.99'  // 1 Pc
+        };
+        
+        // Custom price mapping for subscriptions (with discount)
+        this.subscriptionPriceMapping = {
+            '41858290679865': '£25.46', // 3 Pc + 2 FREE (15% off)
+            '43418249986105': '£33.96', // 2 Pc (15% off)
+            '43418250018873': '£42.49'  // 1 Pc (15% off)
+        };
+        
+        // Original prices from the product data (for reference)
+        this.originalPrices = {
+            onetime: {
+                '41858290679865': '€32,95', // 3295 cents
+                '43418249986105': '€26,95', // 2695 cents
+                '43418250018873': '€20,95'  // 2095 cents
+            },
+            subscription: {
+                '41858290679865': '€28,01', // Discounted price
+                '43418249986105': '€22,91', // Discounted price
+                '43418250018873': '€17,81'  // Discounted price
+            }
+        };
+        
+        // Variant names mapping
+        this.variantNames = {
+            '41858290679865': '3 Pc + 2 FREE (MOST POPULAR!)',
+            '43418249986105': '2 Pc',
+            '43418250018873': '1 Pc'
+        };
+        
+        // Discount percentage for subscriptions
+        this.subscriptionDiscount = 15;
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupAddToCartRedirect();
+        this.startPriceUpdater();
+        this.setupVariantChangeListener();
+        this.setupSubscriptionWidgetListener();
+        
+        // Initial price and variant detection
+        setTimeout(() => {
+            this.updatePriceDisplay();
+            this.updateSelectedVariantDisplay();
+        }, 500);
+    }
+    
+    // Get currently selected variant ID from radio buttons
+    getSelectedVariantId() {
+        const selectedRadio = document.querySelector('input[name="Quantity"]:checked');
+        if (!selectedRadio) return null;
+        
+        // Map the radio value to variant ID
+        const variantValue = selectedRadio.value;
+        const variantMapping = {
+            '3 Pc + 2 FREE (MOST POPULAR!)': '41858290679865',
+            '2 Pc': '43418249986105',
+            '1 Pc': '43418250018873'
+        };
+        
+        return variantMapping[variantValue] || null;
+    }
+    
+    // Get selected purchase type (subscription or one-time)
+    getSelectedPurchaseType() {
+        // Check if subscription widget exists and get its selection
+        const subscriptionWidget = document.querySelector('recharge-subscription-widget');
+        
+        if (subscriptionWidget) {
+            // Try to find the selected option in the subscription widget
+            const subscriptionRadio = subscriptionWidget.shadowRoot?.querySelector('input[value="subscription"]:checked') ||
+                                     document.querySelector('input[name="selling_plan"]:checked') ||
+                                     document.querySelector('.subscription-widget input:checked');
+            
+            // Also check for onetime selection
+            const onetimeRadio = subscriptionWidget.shadowRoot?.querySelector('input[value="onetime"]:checked') ||
+                                document.querySelector('input[name="purchase_option"][value="onetime"]:checked');
+            
+            // Try to detect from widget state classes or data attributes
+            const widgetContainer = document.querySelector('.recharge-subscription-widget, [data-subscription-widget]');
+            
+            if (widgetContainer) {
+                // Check for subscription-selected class or similar indicators
+                if (widgetContainer.classList.contains('subscription-selected') || 
+                    widgetContainer.querySelector('.subscription-option.selected') ||
+                    subscriptionRadio) {
+                    return 'subscription';
+                }
+                
+                if (widgetContainer.classList.contains('onetime-selected') || 
+                    widgetContainer.querySelector('.onetime-option.selected') ||
+                    onetimeRadio) {
+                    return 'onetime';
+                }
+            }
+            
+            // Check for Recharge widget configuration
+            if (window.SubscriptionWidgetConfig?.configs?.subscription_widget_v2?.default_widget_config?.ab_splits?.[0]?.display_configs?.[0]?.config_information?.defaultSelection) {
+                return window.SubscriptionWidgetConfig.configs.subscription_widget_v2.default_widget_config.ab_splits[0].display_configs[0].config_information.defaultSelection;
+            }
+        }
+        
+        // Default to onetime if can't detect subscription widget state
+        return 'onetime';
+    }
+    
+    // Get selected variant from the JSON data in the page
+    getSelectedVariantFromJson() {
+        try {
+            const scriptTag = document.querySelector('script[type="application/json"]');
+            if (scriptTag) {
+                const variants = JSON.parse(scriptTag.textContent);
+                const selectedVariantId = this.getSelectedVariantId();
+                return variants.find(variant => variant.id.toString() === selectedVariantId);
+            }
+        } catch (e) {
+            console.warn('Could not parse variant JSON:', e);
+        }
+        return null;
+    }
+    
+    // Setup redirect functionality for add to cart button
+    setupAddToCartRedirect() {
+        // Handle the main add to cart button
+        const addToCartButton = document.querySelector('#ProductSubmitButton-template--18407959560249__main, .main-product-atc');
+        if (addToCartButton) {
+            addToCartButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.handleAddToCartClick();
+            });
+        }
+        
+        // Handle any other add to cart buttons that might exist
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('button[name="add"]') || 
+                e.target.closest('button[name="add"]') ||
+                e.target.matches('.main-product-atc') ||
+                e.target.closest('.main-product-atc') ||
+                e.target.matches('.atc-button') ||
+                e.target.closest('.atc-button')) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.handleAddToCartClick();
+            }
+        });
+    }
+    
+    // Handle add to cart button click
+    handleAddToCartClick() {
+        const selectedVariantId = this.getSelectedVariantId();
+        const purchaseType = this.getSelectedPurchaseType();
+        
+        if (selectedVariantId && this.variantUrls[purchaseType] && this.variantUrls[purchaseType][selectedVariantId]) {
+            // Show loading state
+            const button = document.querySelector('#ProductSubmitButton-template--18407959560249__main, .main-product-atc');
+            if (button) {
+                // Show loading spinner
+                const spinner = button.querySelector('.loading-overlay__spinner');
+                if (spinner) {
+                    spinner.classList.remove('hidden');
+                }
+                
+                // Update button text
+                const mainLabel = button.querySelector('.main-atc__label__text');
+                if (mainLabel) {
+                    mainLabel.textContent = purchaseType === 'subscription' ? 'Adding subscription...' : 'Adding to cart...';
+                }
+                
+                button.disabled = true;
+            }
+            
+            // Log selected variant info
+            console.log('Redirecting for variant:', {
+                id: selectedVariantId,
+                name: this.variantNames[selectedVariantId],
+                purchaseType: purchaseType,
+                url: this.variantUrls[purchaseType][selectedVariantId],
+                price: purchaseType === 'subscription' ? this.subscriptionPriceMapping[selectedVariantId] : this.onetimePriceMapping[selectedVariantId]
+            });
+            
+            // Add a small delay to show loading state, then redirect
+            setTimeout(() => {
+                window.location.href = this.variantUrls[purchaseType][selectedVariantId];
+            }, 500);
+        } else {
+            console.warn('No variant selected or URL not found for variant:', selectedVariantId, 'purchase type:', purchaseType);
+            this.showErrorMessage('Please select a quantity option');
+        }
+    }
+    
+    // Update price display based on selected variant and purchase type
+    updatePriceDisplay() {
+        const selectedVariantId = this.getSelectedVariantId();
+        const purchaseType = this.getSelectedPurchaseType();
+        
+        if (selectedVariantId) {
+            const currentPrice = purchaseType === 'subscription' ? 
+                this.subscriptionPriceMapping[selectedVariantId] : 
+                this.onetimePriceMapping[selectedVariantId];
+            
+            if (currentPrice) {
+                // Update main price display
+                const mainPriceElements = document.querySelectorAll('.price-item--regular, .main-price');
+                mainPriceElements.forEach(element => {
+                    element.textContent = currentPrice;
+                });
+                
+                // Update any other price displays
+                const otherPriceSelectors = [
+                    '[data-price]',
+                    '.price',
+                    '.product-price',
+                    '.current-price',
+                    '.money'
+                ];
+                
+                otherPriceSelectors.forEach(selector => {
+                    const elements = document.querySelectorAll(selector);
+                    elements.forEach(element => {
+                        element.textContent = currentPrice;
+                    });
+                });
+                
+                // Update subscription widget prices if present
+                this.updateSubscriptionPrices(selectedVariantId, purchaseType);
+                
+                // Update discount badge if subscription is selected
+                this.updateDiscountDisplay(purchaseType);
+            }
+        }
+    }
+    
+    // Update subscription widget prices
+    updateSubscriptionPrices(variantId, purchaseType) {
+        // Update the subscription widget config if it exists
+        if (window.SubscriptionWidgetConfig && window.SubscriptionWidgetConfig.formattedPrices) {
+            if (window.SubscriptionWidgetConfig.formattedPrices[variantId]) {
+                if (purchaseType === 'subscription') {
+                    window.SubscriptionWidgetConfig.formattedPrices[variantId].unit = this.subscriptionPriceMapping[variantId];
+                    window.SubscriptionWidgetConfig.formattedPrices[variantId].discounted = this.subscriptionPriceMapping[variantId];
+                } else {
+                    window.SubscriptionWidgetConfig.formattedPrices[variantId].unit = this.onetimePriceMapping[variantId];
+                    window.SubscriptionWidgetConfig.formattedPrices[variantId].discounted = this.onetimePriceMapping[variantId];
+                }
+            }
+        }
+    }
+    
+    // Update discount display
+    updateDiscountDisplay(purchaseType) {
+        // Find or create discount badge
+        let discountBadge = document.querySelector('.subscription-discount-badge');
+        
+        if (purchaseType === 'subscription') {
+            if (!discountBadge) {
+                discountBadge = document.createElement('div');
+                discountBadge.className = 'subscription-discount-badge';
+                discountBadge.style.cssText = `
+                    background-color: #0F866A;
+                    color: white;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                    font-weight: bold;
+                    display: inline-block;
+                    margin-left: 8px;
+                `;
+                
+                // Insert next to price
+                const priceElement = document.querySelector('.price-item--regular, .main-price');
+                if (priceElement && priceElement.parentNode) {
+                    priceElement.parentNode.insertBefore(discountBadge, priceElement.nextSibling);
+                }
+            }
+            discountBadge.textContent = `Save ${this.subscriptionDiscount}%`;
+            discountBadge.style.display = 'inline-block';
+        } else if (discountBadge) {
+            discountBadge.style.display = 'none';
+        }
+    }
+    
+    // Start the price updater that runs every 500ms
+    startPriceUpdater() {
+        // Run immediately
+        this.updatePriceDisplay();
+        
+        // Then run every 500ms
+        setInterval(() => {
+            this.updatePriceDisplay();
+        }, 500);
+    }
+    
+    // Listen for variant selection changes
+    setupVariantChangeListener() {
+        const variantRadios = document.querySelectorAll('input[name="Quantity"]');
+        
+        variantRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                this.updatePriceDisplay();
+                this.updateSelectedVariantDisplay();
+                this.resetButtonState();
+                
+                // Log variant change
+                const selectedVariantId = this.getSelectedVariantId();
+                const purchaseType = this.getSelectedPurchaseType();
+                console.log('Variant changed to:', {
+                    id: selectedVariantId,
+                    name: this.variantNames[selectedVariantId],
+                    purchaseType: purchaseType,
+                    originalPrice: this.originalPrices[purchaseType][selectedVariantId],
+                    customPrice: purchaseType === 'subscription' ? this.subscriptionPriceMapping[selectedVariantId] : this.onetimePriceMapping[selectedVariantId]
+                });
+            });
+        });
+        
+        // Also listen for label clicks (in case radio doesn't fire)
+        const variantLabels = document.querySelectorAll('label[for*="template--18407959560249__main-1-"]');
+        variantLabels.forEach(label => {
+            label.addEventListener('click', () => {
+                setTimeout(() => {
+                    this.updatePriceDisplay();
+                    this.updateSelectedVariantDisplay();
+                    this.resetButtonState();
+                }, 100);
+            });
+        });
+    }
+    
+    // Listen for subscription widget changes
+    setupSubscriptionWidgetListener() {
+        // Listen for changes in the subscription widget
+        const subscriptionWidget = document.querySelector('recharge-subscription-widget');
+        
+        if (subscriptionWidget) {
+            // Use MutationObserver to watch for changes in the widget
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' || mutation.type === 'childList') {
+                        // Slight delay to ensure widget state has updated
+                        setTimeout(() => {
+                            this.updatePriceDisplay();
+                            this.resetButtonState();
+                        }, 100);
+                    }
+                });
+            });
+            
+            observer.observe(subscriptionWidget, {
+                attributes: true,
+                childList: true,
+                subtree: true
+            });
+        }
+        
+        // Also listen for clicks on the widget container
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('recharge-subscription-widget') || 
+                e.target.closest('.recharge-subscription-widget') ||
+                e.target.matches('[name="purchase_option"]') ||
+                e.target.matches('[name="selling_plan"]')) {
+                
+                setTimeout(() => {
+                    this.updatePriceDisplay();
+                    this.resetButtonState();
+                }, 200);
+            }
+        });
+        
+        // Listen for form changes that might indicate subscription selection
+        document.addEventListener('change', (e) => {
+            if (e.target.matches('[name="purchase_option"]') || 
+                e.target.matches('[name="selling_plan"]') ||
+                e.target.closest('recharge-subscription-widget')) {
+                
+                setTimeout(() => {
+                    this.updatePriceDisplay();
+                    this.resetButtonState();
+                }, 100);
+            }
+        });
+    }
+    
+    // Reset button state after variant change
+    resetButtonState() {
+        const button = document.querySelector('#ProductSubmitButton-template--18407959560249__main, .main-product-atc');
+        if (button) {
+            // Hide loading spinner
+            const spinner = button.querySelector('.loading-overlay__spinner');
+            if (spinner) {
+                spinner.classList.add('hidden');
+            }
+            
+            // Reset main label based on purchase type
+            const mainLabel = button.querySelector('.main-atc__label__text');
+            if (mainLabel) {
+                const purchaseType = this.getSelectedPurchaseType();
+                mainLabel.textContent = purchaseType === 'subscription' ? 'Subscribe now' : 'Add to cart';
+            }
+            
+            button.disabled = false;
+        }
+    }
+    
+    // Update visual indication of selected variant
+    updateSelectedVariantDisplay() {
+        const selectedVariantId = this.getSelectedVariantId();
+        const purchaseType = this.getSelectedPurchaseType();
+        
+        // Remove any existing selection indicators
+        document.querySelectorAll('.variant-selected').forEach(element => {
+            element.classList.remove('variant-selected');
+        });
+        
+        // Add selection indicator to current selection
+        if (selectedVariantId) {
+            const selectedRadio = document.querySelector('input[name="Quantity"]:checked');
+            if (selectedRadio) {
+                const label = document.querySelector(`label[for="${selectedRadio.id}"]`);
+                if (label) {
+                    label.classList.add('variant-selected');
+                    // Add some custom styling for selected variant
+                    label.style.fontWeight = 'bold';
+                    label.style.borderColor = '#121212';
+                    
+                    // Add purchase type indicator
+                    let purchaseTypeIndicator = label.querySelector('.purchase-type-indicator');
+                    if (!purchaseTypeIndicator) {
+                        purchaseTypeIndicator = document.createElement('span');
+                        purchaseTypeIndicator.className = 'purchase-type-indicator';
+                        purchaseTypeIndicator.style.cssText = `
+                            font-size: 11px;
+                            opacity: 0.7;
+                            margin-left: 8px;
+                        `;
+                        label.appendChild(purchaseTypeIndicator);
+                    }
+                    purchaseTypeIndicator.textContent = `(${purchaseType === 'subscription' ? 'Subscribe & Save' : 'One-time'})`;
+                }
+            }
+        }
+    }
+    
+    // Show error message to user
+    showErrorMessage(message) {
+        // Try to use existing error span first
+        let errorElement = document.querySelector('.main-atc__error');
+        
+        if (errorElement) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.style.color = '#d32f2f';
+            errorElement.style.padding = '8px 0';
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 5000);
+        } else {
+            // Create new error message element
+            errorElement = document.createElement('div');
+            errorElement.className = 'variant-error-message';
+            errorElement.style.cssText = `
+                color: #d32f2f;
+                background-color: #ffebee;
+                border: 1px solid #e57373;
+                border-radius: 4px;
+                padding: 12px;
+                margin: 10px 0;
+                font-size: 14px;
+                display: block;
+            `;
+            errorElement.textContent = message;
+            
+            // Insert after the variant selects
+            const variantSelects = document.querySelector('#variant-selects-template--18407959560249__main');
+            if (variantSelects) {
+                variantSelects.parentNode.insertBefore(errorElement, variantSelects.nextSibling);
+            }
+            
+            // Hide error message after 5 seconds
+            setTimeout(() => {
+                if (errorElement) {
+                    errorElement.style.display = 'none';
+                }
+            }, 5000);
+        }
+    }
+    
+    // Public method to update variant URLs
+    updateVariantUrls(purchaseType, newUrls) {
+        if (this.variantUrls[purchaseType]) {
+            this.variantUrls[purchaseType] = { ...this.variantUrls[purchaseType], ...newUrls };
+        }
+    }
+    
+    // Public method to update price mapping
+    updatePriceMapping(purchaseType, newPrices) {
+        if (purchaseType === 'subscription') {
+            this.subscriptionPriceMapping = { ...this.subscriptionPriceMapping, ...newPrices };
+        } else if (purchaseType === 'onetime') {
+            this.onetimePriceMapping = { ...this.onetimePriceMapping, ...newPrices };
+        }
+    }
+    
+    // Get current variant summary for debugging
+    getVariantSummary() {
+        const selectedVariantId = this.getSelectedVariantId();
+        const purchaseType = this.getSelectedPurchaseType();
+        const selectedVariant = this.getSelectedVariantFromJson();
+        
+        return {
+            selectedVariantId,
+            selectedVariantName: this.variantNames[selectedVariantId],
+            purchaseType,
+            redirectUrl: this.variantUrls[purchaseType] ? this.variantUrls[purchaseType][selectedVariantId] : null,
+            customPrice: purchaseType === 'subscription' ? this.subscriptionPriceMapping[selectedVariantId] : this.onetimePriceMapping[selectedVariantId],
+            originalPrice: this.originalPrices[purchaseType] ? this.originalPrices[purchaseType][selectedVariantId] : null,
+            variantData: selectedVariant,
+            allVariants: Object.keys(this.variantUrls.onetime),
+            subscriptionDiscount: purchaseType === 'subscription' ? `${this.subscriptionDiscount}%` : 'N/A'
+        };
+    }
+    
+    // Force price update (useful for testing)
+    forcePriceUpdate() {
+        this.updatePriceDisplay();
+    }
+    
+    // Force purchase type detection (useful for testing)
+    detectPurchaseType() {
+        return this.getSelectedPurchaseType();
+    }
+}
+
+// Initialize the system when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.silvervineVariantManager = new SilvervineVariantManager();
+});
+
+// Also initialize if DOM is already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        window.silvervineVariantManager = new SilvervineVariantManager();
+    });
+} else {
+    window.silvervineVariantManager = new SilvervineVariantManager();
+}
+
+// Example of how to update URLs dynamically for different purchase types:
+// One-time purchase URLs:
+// window.silvervineVariantManager.updateVariantUrls('onetime', {
+//     '41858290679865': 'https://your-domain.com/3pc-2free-onetime-checkout',
+//     '43418249986105': 'https://your-domain.com/2pc-onetime-checkout', 
+//     '43418250018873': 'https://your-domain.com/1pc-onetime-checkout'
+// });
+
+// Subscription URLs:
+// window.silvervineVariantManager.updateVariantUrls('subscription', {
+//     '41858290679865': 'https://your-domain.com/3pc-2free-subscription-checkout',
+//     '43418249986105': 'https://your-domain.com/2pc-subscription-checkout',
+//     '43418250018873': 'https://your-domain.com/1pc-subscription-checkout'
+// });
+
+// Example of how to update prices dynamically:
+// One-time prices:
+// window.silvervineVariantManager.updatePriceMapping('onetime', {
+//     '41858290679865': '£25.99',
+//     '43418249986105': '£35.99',
+//     '43418250018873': '£45.99'
+// });
+
+// Subscription prices:
+// window.silvervineVariantManager.updatePriceMapping('subscription', {
+//     '41858290679865': '£22.09',  // 15% off
+//     '43418249986105': '£30.59',  // 15% off
+//     '43418250018873': '£39.09'   // 15% off
+// });
+
+// Debug helpers:
+// Check current variant and purchase type selection
+// console.log(window.silvervineVariantManager.getVariantSummary());
+
+// Force price update (for testing)
+// window.silvervineVariantManager.forcePriceUpdate();
+
+// Detect current purchase type
+// console.log('Current purchase type:', window.silvervineVariantManager.detectPurchaseType());
 
 </script>
 
