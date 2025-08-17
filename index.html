@@ -8952,110 +8952,151 @@ if (document.readyState === 'loading') {
 </script>
 
 <script>
-
-// PRECISE HIDING - Only subscription div, preserve one-time option
-function hideOnlySubscriptionDiv() {
-    // Target only the subscription div specifically
-    const subscriptionDiv = document.querySelector('div.rc-purchase-option.rc-purchase-option__subscription');
+  // PRECISE HIDING - Only subscription, preserve one-time
+(function() {
+    'use strict';
     
-    if (subscriptionDiv) {
-        // Multiple hiding methods for the subscription div only
-        subscriptionDiv.style.display = 'none';
-        subscriptionDiv.style.visibility = 'hidden';
-        subscriptionDiv.style.opacity = '0';
-        subscriptionDiv.style.height = '0';
-        subscriptionDiv.style.width = '0';
-        subscriptionDiv.style.overflow = 'hidden';
-        subscriptionDiv.style.position = 'absolute';
-        subscriptionDiv.style.left = '-9999px';
-        subscriptionDiv.setAttribute('hidden', 'true');
-        subscriptionDiv.setAttribute('aria-hidden', 'true');
-        
-        // Remove it entirely
-        subscriptionDiv.remove();
-    }
+    console.log("🎯 PRECISE HIDING SCRIPT STARTING...");
     
-    // Alternative: Find by content but exclude one-time
-    const allDivs = document.querySelectorAll('div');
-    allDivs.forEach(div => {
-        // Only hide if it contains subscription content but NOT one-time content
-        if (div.innerHTML && 
-            (div.innerHTML.includes('Subscribe &amp; save') || 
-             div.innerHTML.includes('Save up to 15%')) &&
-            !div.innerHTML.includes('One-time')) {
-            div.style.display = 'none';
-            div.remove();
-        }
-    });
-}
-
-// Precise CSS targeting only subscription elements
-function injectPreciseCSS() {
+    // Method 1: Precise CSS - Only hide subscription, ensure one-time shows
     const style = document.createElement('style');
-    style.textContent = `
-        /* Only hide subscription option, not one-time */
-        .rc-purchase-option.rc-purchase-option__subscription {
+    style.innerHTML = `
+        /* Hide only subscription elements */
+        .rc-purchase-option__subscription,
+        .rc-purchase-option.rc-purchase-option__subscription,
+        [rc-not-selected=""] {
             display: none !important;
             visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
-            overflow: hidden !important;
-            position: absolute !important;
-            left: -9999px !important;
-            pointer-events: none !important;
         }
         
-        /* Ensure one-time option remains visible */
-        .rc-purchase-option.rc-selection__onetime,
-        .rc-purchase-option__onetime {
+        /* FORCE one-time to be visible */
+        .rc-selection__onetime,
+        .rc-purchase-option__onetime,
+        [rc-selected=""],
+        [rc-selected] {
             display: block !important;
             visibility: visible !important;
             opacity: 1 !important;
             position: relative !important;
-            left: auto !important;
             height: auto !important;
             width: auto !important;
         }
         
-        /* Hide elements containing subscription text but preserve one-time */
-        div[class*="subscription"]:not([class*="onetime"]) {
-            display: none !important;
+        /* Show the parent container */
+        .rc-selection__root {
+            display: block !important;
+            visibility: visible !important;
         }
     `;
-    document.head.appendChild(style);
-}
-
-// Smart monitoring that preserves one-time option
-function startPreciseMonitoring() {
-    // Run immediately
-    hideOnlySubscriptionDiv();
-    injectPreciseCSS();
+    document.head.insertBefore(style, document.head.firstChild);
     
-    // Monitor for changes but be selective
+    // Method 2: Smart DOM manipulation
+    function hideOnlySubscription() {
+        console.log("🔍 Looking for elements to hide/show...");
+        
+        let hidden = 0;
+        let shown = 0;
+        
+        // Hide subscription elements specifically
+        const subscriptionSelectors = [
+            '.rc-purchase-option__subscription',
+            '[rc-not-selected]',
+            '[part*="subscription"]'
+        ];
+        
+        subscriptionSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                // Double-check it's not the one-time option
+                if (!el.classList.contains('rc-selection__onetime') && 
+                    !el.hasAttribute('rc-selected') &&
+                    !el.innerHTML.includes('One-time')) {
+                    console.log(`❌ Hiding subscription element:`, el.className);
+                    el.style.display = 'none';
+                    hidden++;
+                }
+            });
+        });
+        
+        // Ensure one-time elements are visible
+        const onetimeSelectors = [
+            '.rc-selection__onetime',
+            '.rc-purchase-option__onetime', 
+            '[rc-selected]',
+            '[part*="onetime"]'
+        ];
+        
+        onetimeSelectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                console.log(`✅ Ensuring one-time is visible:`, el.className);
+                el.style.display = 'block';
+                el.style.visibility = 'visible';
+                el.style.opacity = '1';
+                shown++;
+            });
+        });
+        
+        // Content-based hiding (more careful)
+        document.querySelectorAll('.rc-purchase-option').forEach(div => {
+            const html = div.innerHTML || '';
+            const text = div.textContent || '';
+            
+            // Only hide if it contains subscription content AND doesn't contain one-time
+            if ((html.includes('Subscribe &amp; save') || 
+                 html.includes('Save up to 15%') ||
+                 text.includes('Subscribe')) &&
+                !html.includes('One-time') &&
+                !text.includes('One-time') &&
+                !div.hasAttribute('rc-selected')) {
+                console.log(`❌ Hiding subscription by content:`, div);
+                div.style.display = 'none';
+                hidden++;
+            }
+            
+            // Ensure one-time is visible
+            if (html.includes('One-time') || div.hasAttribute('rc-selected')) {
+                console.log(`✅ Ensuring one-time visible by content:`, div);
+                div.style.display = 'block';
+                div.style.visibility = 'visible';
+                shown++;
+            }
+        });
+        
+        console.log(`📊 Hidden: ${hidden}, Shown: ${shown}`);
+        return { hidden, shown };
+    }
+    
+    // Method 3: Run immediately and on key events
+    hideOnlySubscription();
+    
+    // Run with small delays to catch dynamic content
+    [10, 50, 100, 500].forEach(delay => {
+        setTimeout(hideOnlySubscription, delay);
+    });
+    
+    // Method 4: Smart observer - only act on relevant changes
     const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
+        let shouldRun = false;
+        
+        mutations.forEach(mutation => {
             if (mutation.type === 'childList') {
-                // Only process subscription-related changes
                 mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1) { // Element node
-                        // Check if it's a subscription div
+                    if (node.nodeType === 1) { // Element
                         if (node.classList && 
-                            (node.classList.contains('rc-purchase-option__subscription') ||
-                             node.classList.contains('subscription'))) {
-                            hideOnlySubscriptionDiv();
-                        }
-                        
-                        // Check child elements
-                        const subscriptionElements = node.querySelectorAll && 
-                            node.querySelectorAll('.rc-purchase-option__subscription');
-                        if (subscriptionElements && subscriptionElements.length > 0) {
-                            hideOnlySubscriptionDiv();
+                            (node.classList.contains('rc-purchase-option') ||
+                             node.querySelector && node.querySelector('.rc-purchase-option'))) {
+                            shouldRun = true;
                         }
                     }
                 });
             }
         });
+        
+        if (shouldRun) {
+            console.log("🔄 Relevant DOM change detected");
+            setTimeout(hideOnlySubscription, 10);
+        }
     });
     
     observer.observe(document.body, {
@@ -9063,19 +9104,36 @@ function startPreciseMonitoring() {
         subtree: true
     });
     
-    // Periodic check but less aggressive
-    setInterval(() => {
-        hideOnlySubscriptionDiv();
-    }, 1000);
-}
-
-// Execute immediately and on DOM ready
-startPreciseMonitoring();
-
-document.addEventListener('DOMContentLoaded', startPreciseMonitoring);
-
-// Backup execution
-setTimeout(startPreciseMonitoring, 1000);
-
+    // Method 5: Event listeners
+    document.addEventListener('DOMContentLoaded', hideOnlySubscription);
+    window.addEventListener('load', hideOnlySubscription);
+    
+    // Method 6: Gentle monitoring (less aggressive)
+    let checkCount = 0;
+    const gentleInterval = setInterval(() => {
+        checkCount++;
+        const subscription = document.querySelector('.rc-purchase-option__subscription, [rc-not-selected]');
+        const onetime = document.querySelector('.rc-selection__onetime, [rc-selected]');
+        
+        if (subscription) {
+            console.log(`🚨 Found subscription element (check ${checkCount}), hiding...`);
+            hideOnlySubscription();
+        }
+        
+        if (onetime && onetime.style.display === 'none') {
+            console.log(`🚨 One-time hidden (check ${checkCount}), showing...`);
+            onetime.style.display = 'block';
+            onetime.style.visibility = 'visible';
+        }
+        
+        // Stop after 50 checks (5 seconds)
+        if (checkCount >= 50) {
+            clearInterval(gentleInterval);
+            console.log("✅ Monitoring complete");
+        }
+    }, 100);
+    
+    console.log("🎯 PRECISE SCRIPT LOADED - Only subscription will be hidden!");
+})();
 </script>
 </html>
