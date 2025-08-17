@@ -8185,7 +8185,7 @@ if (document.readyState === 'loading') {
 
 </script> -->
 
-<Script>
+<script>
 
 // Enhanced Silvervine Sticks Variant-based URL redirect and price management system
 // Now includes Subscribe & Save and One-time purchase options with improved price updating
@@ -8461,6 +8461,39 @@ class SilvervineVariantManager {
             }
         }
         
+        // Target the specific Recharge widget one-time purchase option
+        const onetimePurchaseOption = document.querySelector('.rc-purchase-option__onetime, .rc-selection__onetime');
+        if (onetimePurchaseOption) {
+            const onetimePriceElement = onetimePurchaseOption.querySelector('.rc-price');
+            if (onetimePriceElement) {
+                onetimePriceElement.textContent = onetimePrice;
+                console.log('Updated one-time price in RC widget:', onetimePrice);
+            }
+        }
+        
+        // Target the specific Recharge widget subscription purchase option
+        const subscriptionPurchaseOption = document.querySelector('.rc-purchase-option__subscription, .rc-selection__subscription');
+        if (subscriptionPurchaseOption) {
+            const subscriptionPriceElement = subscriptionPurchaseOption.querySelector('.rc-price');
+            if (subscriptionPriceElement) {
+                subscriptionPriceElement.textContent = subscriptionPrice;
+                console.log('Updated subscription price in RC widget:', subscriptionPrice);
+            }
+        }
+        
+        // Additional targeting for all rc-price elements with context detection
+        const allRcPriceElements = document.querySelectorAll('.rc-price');
+        allRcPriceElements.forEach(element => {
+            // Check if this price element is within a one-time purchase option
+            if (element.closest('.rc-purchase-option__onetime, .rc-selection__onetime, [part*="onetime"]')) {
+                element.textContent = onetimePrice;
+            }
+            // Check if this price element is within a subscription purchase option
+            else if (element.closest('.rc-purchase-option__subscription, .rc-selection__subscription, [part*="subscription"]')) {
+                element.textContent = subscriptionPrice;
+            }
+        });
+        
         // Target specific subscription widget elements
         const subscriptionWidget = document.querySelector('recharge-subscription-widget');
         
@@ -8468,12 +8501,12 @@ class SilvervineVariantManager {
             // Update prices in shadow DOM if accessible
             if (subscriptionWidget.shadowRoot) {
                 const shadowPriceElements = subscriptionWidget.shadowRoot.querySelectorAll(
-                    '.price, .money, [data-price], .subscription-price, .onetime-price'
+                    '.rc-price, .price, .money, [data-price], .subscription-price, .onetime-price'
                 );
                 shadowPriceElements.forEach(element => {
-                    if (element.closest('.subscription-option, [data-subscription]')) {
+                    if (element.closest('.rc-purchase-option__subscription, .subscription-option, [data-subscription], [part*="subscription"]')) {
                         element.textContent = subscriptionPrice;
-                    } else if (element.closest('.onetime-option, [data-onetime]')) {
+                    } else if (element.closest('.rc-purchase-option__onetime, .onetime-option, [data-onetime], [part*="onetime"]')) {
                         element.textContent = onetimePrice;
                     }
                 });
@@ -8495,7 +8528,6 @@ class SilvervineVariantManager {
             '.onetime-option .money',
             '.one-time .price',
             '.one-time .money',
-            ".rc-purchase-option__price",
             
             // Subscription option selectors
             '.subscription-purchase .price',
@@ -8514,7 +8546,6 @@ class SilvervineVariantManager {
             '.purchase-option .price',
             '.purchase-option .money',
             '.widget-price',
-            '.rc-price', // Recharge specific
             '.rc-option-price'
         ];
         
@@ -8522,9 +8553,9 @@ class SilvervineVariantManager {
             const elements = document.querySelectorAll(selector);
             elements.forEach(element => {
                 // Determine if this is for subscription or one-time based on context
-                if (element.closest('.subscription-option, .subscription-purchase, .subscribe, [data-subscription]')) {
+                if (element.closest('.rc-purchase-option__subscription, .subscription-option, .subscription-purchase, .subscribe, [data-subscription], [part*="subscription"]')) {
                     element.textContent = subscriptionPrice;
-                } else if (element.closest('.onetime-option, .onetime-purchase, .one-time, [data-onetime]')) {
+                } else if (element.closest('.rc-purchase-option__onetime, .onetime-option, .onetime-purchase, .one-time, [data-onetime], [part*="onetime"]')) {
                     element.textContent = onetimePrice;
                 } else if (selector.includes('onetime') || selector.includes('one-time')) {
                     element.textContent = onetimePrice;
@@ -8885,5 +8916,5 @@ if (document.readyState === 'loading') {
 // Force complete price update
 // window.silvervineVariantManager.forcePriceUpdate();
 
-</Script>
+</script>
 </html>
