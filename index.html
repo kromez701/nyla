@@ -8950,4 +8950,81 @@ if (document.readyState === 'loading') {
 // window.silvervineVariantManager.forcePriceUpdate();
 
 </script>
+
+<script>
+
+// Method 1: Hide by class selector
+function hideSubscriptionOption() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.style.display = 'none';
+    }
+}
+
+// Method 2: More robust - hide all subscription options
+function hideAllSubscriptionOptions() {
+    const subscriptionDivs = document.querySelectorAll('.rc-purchase-option__subscription');
+    subscriptionDivs.forEach(div => {
+        div.style.display = 'none';
+    });
+}
+
+// Method 3: Using CSS visibility (keeps space but makes invisible)
+function makeSubscriptionInvisible() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.style.visibility = 'hidden';
+        subscriptionDiv.style.height = '0';
+        subscriptionDiv.style.overflow = 'hidden';
+    }
+}
+
+// Method 4: Remove from DOM entirely
+function removeSubscriptionOption() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.remove();
+    }
+}
+
+// Method 5: Add CSS rule to hide it permanently
+function addCSSRuleToHideSubscription() {
+    const style = document.createElement('style');
+    style.textContent = `
+        .rc-purchase-option__subscription {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Execute when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Choose one of these methods:
+    hideSubscriptionOption(); // Recommended
+    
+    // Or use the CSS method for permanent hiding:
+    // addCSSRuleToHideSubscription();
+});
+
+// If the content loads dynamically, use MutationObserver
+function observeAndHideSubscription() {
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+                if (subscriptionDiv) {
+                    subscriptionDiv.style.display = 'none';
+                }
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+}
+
+</script>
 </html>
