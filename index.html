@@ -7555,13 +7555,35 @@ window.addEventListener('load', () => {
 </script>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const subscribediv = document.querySelector(".rc-selection__root")
-    console.log("subscriber div", subscribediv)
-    if (subscribediv){
-      subscribediv.style.display = "none"
+  function hideSubscriptionDiv() {
+  const subscribediv = document.querySelector(".rc-purchase-option.rc-purchase-option__subscription");
+  if (subscribediv) {
+    subscribediv.style.display = "none";
+    console.log("Subscription div hidden");
+    return true;
+  }
+  return false;
+}
+
+// Create observer to watch for when the element appears
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'childList') {
+      if (hideSubscriptionDiv()) {
+        observer.disconnect(); // Stop observing once we've hidden it
+      }
     }
-  })
+  });
+});
+
+// Start observing
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+// Also try to hide it immediately in case it's already there
+hideSubscriptionDiv();
 </script>
 
 <!-- <script>
