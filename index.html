@@ -7556,7 +7556,14 @@ window.addEventListener('load', () => {
 
 <script>
   function hideSubscriptionDiv() {
-  const subscribediv = document.querySelector(".rc-purchase-option__subscription");
+      const selectors = [
+    '[rc-not-selected]',
+    '[rc-not-selected=""]',
+    '.rc-purchase-option[rc-not-selected]',
+    '[part*="rc-purchase-option__subscription"]',
+    '.rc-purchase-option.rc-purchase-option__subscription'
+  ];
+  const subscribediv = document.querySelector(selectors);
   console.log("subscribed div", subscribediv)
   if (subscribediv) {
     subscribediv.style.display = "none";
