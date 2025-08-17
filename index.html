@@ -8514,7 +8514,7 @@ class SilvervineVariantManager {
         
         // Additional targeting for all rc-price elements with context detection
         const allRcPriceElements = document.querySelectorAll('.rc-price');
-        console.log("price", allRcPriceElements)
+      
         allRcPriceElements.forEach(element => {
             // Check if this price element is within a one-time purchase option
             if (element.closest('.rc-purchase-option__onetime, .rc-selection__onetime, [part*="onetime"]')) {
@@ -8528,6 +8528,7 @@ class SilvervineVariantManager {
         
         // Target specific subscription widget elements
         const subscriptionWidget = document.querySelector('recharge-subscription-widget');
+        console.log("sub2:", subscriptionWidget)
         
         if (subscriptionWidget) {
             // Update prices in shadow DOM if accessible
