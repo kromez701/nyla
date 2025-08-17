@@ -8952,198 +8952,241 @@ if (document.readyState === 'loading') {
 </script>
 
 <script>
-  // ABSOLUTE NUCLEAR ANNIHILATION - FIRST DIV MUST DIE
+  // DIAGNOSTIC + ULTIMATE DESTRUCTION
 (function() {
     'use strict';
     
-    console.log("🚀 LAUNCHING NUCLEAR STRIKE ON FIRST DIV");
+    console.log("🔍 DIAGNOSTIC MODE + ULTIMATE DESTRUCTION");
     
-    // Method 1: IMMEDIATE CSS INJECTION - BEFORE ANYTHING LOADS
-    const nukeCSS = document.createElement('style');
-    nukeCSS.innerHTML = `
-        /* IMMEDIATE OBLITERATION */
-        .rc-selection__root > *:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-        .rc-selection__root > div:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-        .rc-selection__root > div:nth-child(1) { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-        .rc-purchase-option:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-        [rc-not-selected] { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-        .rc-purchase-option__subscription { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
-    `;
-    if (document.head) {
-        document.head.insertBefore(nukeCSS, document.head.firstChild);
-    } else {
-        document.documentElement.appendChild(nukeCSS);
-    }
-    
-    // Method 2: SCORCHED EARTH FUNCTION
-    function scorchedEarth() {
-        console.log("🔥 SCORCHED EARTH PROTOCOL ACTIVATED");
+    // First, let's see exactly what we're dealing with
+    function fullDiagnostic() {
+        console.log("=== FULL DIAGNOSTIC REPORT ===");
         
-        let nuked = 0;
-        
-        // NUKE 1: First child of parent
         const parent = document.querySelector('.rc-selection__root');
+        console.log("Parent found:", !!parent);
+        
         if (parent) {
-            const children = Array.from(parent.children);
-            if (children.length > 0) {
-                const firstChild = children[0];
-                console.log("☢️ NUKING FIRST CHILD:", firstChild);
-                
-                // TOTAL ANNIHILATION
-                firstChild.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important;';
-                firstChild.setAttribute('hidden', 'hidden');
-                firstChild.setAttribute('aria-hidden', 'true');
-                firstChild.setAttribute('style', 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;');
-                firstChild.className += ' NUKED-ELEMENT';
-                
-                // PHYSICAL REMOVAL
-                try { firstChild.remove(); } catch(e) {}
-                try { firstChild.parentNode.removeChild(firstChild); } catch(e) {}
-                
-                nuked++;
-            }
+            console.log("Parent element:", parent);
+            console.log("Parent HTML:", parent.outerHTML);
+            console.log("Children count:", parent.children.length);
+            
+            Array.from(parent.children).forEach((child, i) => {
+                console.log(`--- CHILD ${i} ---`);
+                console.log("Element:", child);
+                console.log("TagName:", child.tagName);
+                console.log("ClassName:", child.className);
+                console.log("ID:", child.id);
+                console.log("Attributes:", Array.from(child.attributes).map(attr => `${attr.name}="${attr.value}"`));
+                console.log("InnerText:", child.innerText?.substring(0, 100));
+                console.log("Computed style display:", window.getComputedStyle(child).display);
+                console.log("Computed style visibility:", window.getComputedStyle(child).visibility);
+                console.log("OffsetWidth:", child.offsetWidth);
+                console.log("OffsetHeight:", child.offsetHeight);
+                console.log("HTML:", child.outerHTML.substring(0, 300));
+            });
         }
         
-        // NUKE 2: All selectors
+        // Check all possible selectors
         const selectors = [
             '.rc-purchase-option__subscription',
-            '.rc-purchase-option.rc-purchase-option__subscription',
+            '.rc-purchase-option',
             '[rc-not-selected]',
-            '[rc-not-selected=""]',
-            '.rc-purchase-option:first-child',
-            '.rc-selection__root > div:first-child',
-            '.rc-selection__root > *:first-child'
+            '[class*="subscription"]',
+            '[part*="subscription"]'
         ];
         
-        selectors.forEach(selector => {
-            try {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(el => {
-                    console.log(`☢️ NUKING BY SELECTOR ${selector}:`, el);
-                    el.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;';
-                    try { el.remove(); } catch(e) {}
-                    try { el.parentNode.removeChild(el); } catch(e) {}
-                    nuked++;
-                });
-            } catch(e) {}
+        selectors.forEach(sel => {
+            const elements = document.querySelectorAll(sel);
+            console.log(`Selector "${sel}" found ${elements.length} elements:`, elements);
         });
+    }
+    
+    // Run diagnostic immediately
+    fullDiagnostic();
+    
+    // Ultimate destruction function
+    function ultimateDestruction() {
+        console.log("💀 ULTIMATE DESTRUCTION PROTOCOL");
         
-        // NUKE 3: Content-based destruction
-        const allElements = document.getElementsByTagName('*');
-        Array.from(allElements).forEach(el => {
-            const html = el.innerHTML || '';
-            const text = el.textContent || '';
+        const parent = document.querySelector('.rc-selection__root');
+        if (!parent) {
+            console.log("❌ No parent found");
+            return;
+        }
+        
+        const children = Array.from(parent.children);
+        console.log(`Found ${children.length} children`);
+        
+        if (children.length > 0) {
+            const firstChild = children[0];
+            console.log("🎯 Targeting first child:", firstChild);
             
-            if ((html.includes('Subscribe &amp; save') || 
-                 html.includes('Save up to 15%') ||
-                 text.includes('Subscribe') ||
-                 text.includes('Save up to')) &&
-                !html.includes('One-time') &&
-                !text.includes('One-time')) {
-                
-                console.log("☢️ NUKING BY CONTENT:", el);
-                el.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;';
-                try { el.remove(); } catch(e) {}
-                try { el.parentNode.removeChild(el); } catch(e) {}
-                nuked++;
-            }
-        });
-        
-        console.log(`☢️ NUCLEAR STRIKE COMPLETE: ${nuked} TARGETS ELIMINATED`);
-        return nuked;
-    }
-    
-    // Method 3: IMMEDIATE EXECUTION
-    scorchedEarth();
-    
-    // Method 4: RAPID BOMBARDMENT
-    for(let i = 0; i < 100; i++) {
-        setTimeout(scorchedEarth, i);
-    }
-    
-    // Method 5: CONTINUOUS BOMBARDMENT
-    [1,2,3,4,5,10,15,20,25,50,75,100,150,200,300,500,750,1000,1500,2000,3000,5000].forEach(delay => {
-        setTimeout(scorchedEarth, delay);
-    });
-    
-    // Method 6: MUTATION INTERCEPTOR
-    const nuclearObserver = new MutationObserver(function(mutations) {
-        console.log("🚨 MUTATION DETECTED - LAUNCHING COUNTER-STRIKE");
-        scorchedEarth();
-        setTimeout(scorchedEarth, 1);
-        setTimeout(scorchedEarth, 10);
-    });
-    
-    nuclearObserver.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeOldValue: true,
-        characterData: true
-    });
-    
-    // Method 7: FUNCTION OVERRIDES
-    const originalCreateElement = document.createElement;
-    document.createElement = function(tagName) {
-        const element = originalCreateElement.call(this, tagName);
-        
-        // Intercept any new divs
-        if (tagName.toLowerCase() === 'div') {
+            // METHOD 1: Style obliteration
+            const destructiveStyle = `
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+                height: 0px !important;
+                width: 0px !important;
+                max-height: 0px !important;
+                max-width: 0px !important;
+                min-height: 0px !important;
+                min-width: 0px !important;
+                position: absolute !important;
+                left: -99999px !important;
+                top: -99999px !important;
+                z-index: -99999 !important;
+                overflow: hidden !important;
+                pointer-events: none !important;
+                user-select: none !important;
+                transform: scale(0) !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: none !important;
+                outline: none !important;
+            `;
+            
+            firstChild.style.cssText = destructiveStyle;
+            firstChild.setAttribute('style', destructiveStyle);
+            
+            // METHOD 2: Attribute destruction
+            firstChild.setAttribute('hidden', 'hidden');
+            firstChild.setAttribute('aria-hidden', 'true');
+            firstChild.setAttribute('data-destroyed', 'true');
+            
+            // METHOD 3: Class destruction
+            firstChild.className = 'DESTROYED-ELEMENT';
+            
+            // METHOD 4: Content destruction
+            const originalHTML = firstChild.innerHTML;
+            firstChild.innerHTML = '<!-- DESTROYED -->';
+            
+            // METHOD 5: Event blocking
+            firstChild.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+            
+            // METHOD 6: Property overrides
+            try {
+                Object.defineProperty(firstChild, 'offsetWidth', { get: () => 0 });
+                Object.defineProperty(firstChild, 'offsetHeight', { get: () => 0 });
+                Object.defineProperty(firstChild, 'clientWidth', { get: () => 0 });
+                Object.defineProperty(firstChild, 'clientHeight', { get: () => 0 });
+            } catch(e) {}
+            
+            // METHOD 7: Physical removal (try multiple approaches)
             setTimeout(() => {
-                const html = element.innerHTML || '';
-                if (html.includes('Subscribe') || element.hasAttribute('rc-not-selected')) {
-                    console.log("🛡️ INTERCEPTED SUBSCRIBE ELEMENT CREATION");
-                    element.style.display = 'none';
-                    try { element.remove(); } catch(e) {}
+                try {
+                    firstChild.remove();
+                    console.log("✅ Removed with .remove()");
+                } catch(e) {
+                    console.log("❌ .remove() failed:", e);
                 }
-            }, 1);
+            }, 10);
+            
+            setTimeout(() => {
+                try {
+                    if (firstChild.parentNode) {
+                        firstChild.parentNode.removeChild(firstChild);
+                        console.log("✅ Removed with removeChild()");
+                    }
+                } catch(e) {
+                    console.log("❌ removeChild() failed:", e);
+                }
+            }, 20);
+            
+            setTimeout(() => {
+                try {
+                    parent.removeChild(firstChild);
+                    console.log("✅ Removed directly from parent");
+                } catch(e) {
+                    console.log("❌ Direct removal failed:", e);
+                }
+            }, 30);
+            
+            // METHOD 8: Replace with empty element
+            setTimeout(() => {
+                try {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.style.display = 'none';
+                    parent.replaceChild(emptyDiv, firstChild);
+                    console.log("✅ Replaced with empty element");
+                } catch(e) {
+                    console.log("❌ Replace failed:", e);
+                }
+            }, 40);
+            
+            console.log("💀 DESTRUCTION COMPLETE");
         }
         
-        return element;
-    };
+        // Run diagnostic after destruction
+        setTimeout(fullDiagnostic, 100);
+    }
     
-    // Method 8: PROPERTY HIJACKING
-    Object.defineProperty(HTMLElement.prototype, 'style', {
-        get: function() {
-            return this._style || (this._style = {});
-        },
-        set: function(value) {
-            if (this.hasAttribute('rc-not-selected') || 
-                this.classList.contains('rc-purchase-option__subscription')) {
-                console.log("🛡️ HIJACKED STYLE CHANGE - BLOCKING");
-                this._style = { display: 'none' };
-                return;
+    // Super aggressive CSS injection
+    const superCSS = document.createElement('style');
+    superCSS.innerHTML = `
+        .rc-selection__root > *:first-child,
+        .rc-selection__root > div:first-child,
+        .rc-selection__root > div:nth-child(1) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: fixed !important;
+            left: -99999px !important;
+            top: -99999px !important;
+            z-index: -99999 !important;
+            transform: scale(0) !important;
+            pointer-events: none !important;
+            overflow: hidden !important;
+        }
+    `;
+    document.head.insertBefore(superCSS, document.head.firstChild);
+    
+    // Execute destruction multiple times
+    ultimateDestruction();
+    
+    [10, 50, 100, 200, 500, 1000, 2000, 3000, 5000].forEach(delay => {
+        setTimeout(() => {
+            console.log(`🔄 Destruction attempt at ${delay}ms`);
+            ultimateDestruction();
+        }, delay);
+    });
+    
+    // Continuous monitoring with detailed logging
+    const monitorInterval = setInterval(() => {
+        const parent = document.querySelector('.rc-selection__root');
+        if (parent && parent.children.length > 0) {
+            const firstChild = parent.children[0];
+            const computedStyle = window.getComputedStyle(firstChild);
+            
+            if (computedStyle.display !== 'none' || firstChild.offsetWidth > 0 || firstChild.offsetHeight > 0) {
+                console.log("🚨 FIRST ELEMENT STILL VISIBLE!");
+                console.log("Display:", computedStyle.display);
+                console.log("Visibility:", computedStyle.visibility);
+                console.log("Opacity:", computedStyle.opacity);
+                console.log("Width:", firstChild.offsetWidth);
+                console.log("Height:", firstChild.offsetHeight);
+                console.log("Element:", firstChild);
+                
+                ultimateDestruction();
             }
-            this._style = value;
         }
-    });
+    }, 100);
     
-    // Method 9: EXTREME MONITORING
-    const extremeInterval = setInterval(() => {
-        const survivors = document.querySelectorAll('[rc-not-selected], .rc-purchase-option__subscription, .rc-selection__root > *:first-child');
-        if (survivors.length > 0) {
-            console.log(`🚨 ${survivors.length} SURVIVORS DETECTED - LAUNCHING PRECISION STRIKE`);
-            survivors.forEach(survivor => {
-                console.log("🎯 ELIMINATING SURVIVOR:", survivor);
-                survivor.style.cssText = 'display: none !important;';
-                try { survivor.remove(); } catch(e) {}
-            });
-            scorchedEarth();
-        }
-    }, 10); // Every 10ms!
-    
-    // Stop extreme monitoring after 2 minutes
+    // Stop monitoring after 1 minute
     setTimeout(() => {
-        clearInterval(extremeInterval);
-        console.log("☢️ NUCLEAR MISSION ACCOMPLISHED");
-    }, 120000);
+        clearInterval(monitorInterval);
+        console.log("🔍 Final diagnostic:");
+        fullDiagnostic();
+    }, 60000);
     
-    // Method 10: EVENT LISTENERS
-    ['DOMContentLoaded', 'load', 'readystatechange'].forEach(event => {
-        document.addEventListener(event, scorchedEarth);
-    });
-    
-    console.log("☢️ NUCLEAR ARSENAL DEPLOYED - FIRST DIV WILL BE OBLITERATED");
+    console.log("🔍 DIAGNOSTIC + DESTRUCTION SCRIPT LOADED");
 })();
 </script>
 </html>
