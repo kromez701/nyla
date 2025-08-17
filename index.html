@@ -7388,6 +7388,9 @@ var vstar_ai_summary_settings = {"home":{"is_active":0,"title_color":"#303030","
    .rc-purchase-option.rc-purchase-option__subscription{
     display: none !important;
    }
+   .rc-purchase-option:not(:last-child){
+    display: none !important;
+   }
 </style>
 
 </div></body>
@@ -7563,7 +7566,7 @@ window.addEventListener('load', () => {
     '.rc-purchase-option.rc-purchase-option__subscription'
   ];
   function hideSubscriptionDiv() {
-  const subscribediv = document.querySelector(selectors);
+  const subscribediv = document.querySelector(".rc-purchase-option:not(:last-child)");
   console.log("subscribed div", subscribediv)
   if (subscribediv) {
     subscribediv.style.display = "none";
