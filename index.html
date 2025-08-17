@@ -8957,7 +8957,7 @@ if (document.readyState === 'loading') {
 <script>
   // HIDE SUBSCRIPTION OPTION IN RECHARGE WIDGET SHADOW DOM
 
-// Method 1: Direct access to Recharge widget shadow root
+// Method 1: PRECISELY target ONLY the subscription div
 function hideRechargeSubscription() {
     const rechargeWidget = document.querySelector('recharge-subscription-widget');
     
@@ -8965,12 +8965,20 @@ function hideRechargeSubscription() {
         // Access the shadow DOM
         const shadowRoot = rechargeWidget.shadowRoot;
         
-        // Find and hide the subscription option
+        // Find ONLY the subscription option (not one-time)
         const subscriptionDiv = shadowRoot.querySelector('.rc-purchase-option__subscription');
         if (subscriptionDiv) {
             subscriptionDiv.style.display = 'none';
             subscriptionDiv.style.visibility = 'hidden';
-            console.log('✅ Hidden subscription option in Recharge widget');
+            console.log('✅ Hidden ONLY subscription option in Recharge widget');
+            
+            // Ensure one-time option remains visible
+            const onetimeDiv = shadowRoot.querySelector('.rc-purchase-option__onetime, .rc-selection__onetime');
+            if (onetimeDiv) {
+                onetimeDiv.style.display = '';
+                onetimeDiv.style.visibility = '';
+                console.log('✅ One-time option kept visible');
+            }
             return true;
         }
     }
@@ -9053,7 +9061,7 @@ function hideRechargeWithObserver() {
     observeShadowRoot();
 }
 
-// Method 4: CSS injection into shadow DOM
+// Method 4: CSS injection ONLY for subscription div
 function hideRechargeWithCSS() {
     function injectCSS() {
         const rechargeWidget = document.querySelector('recharge-subscription-widget');
@@ -9061,7 +9069,7 @@ function hideRechargeWithCSS() {
         if (rechargeWidget && rechargeWidget.shadowRoot) {
             const shadowRoot = rechargeWidget.shadowRoot;
             
-            // Create style element
+            // Create style element that ONLY targets subscription
             const style = document.createElement('style');
             style.textContent = `
                 .rc-purchase-option__subscription {
@@ -9071,11 +9079,20 @@ function hideRechargeWithCSS() {
                     height: 0 !important;
                     overflow: hidden !important;
                 }
+                
+                /* Ensure one-time option stays visible */
+                .rc-purchase-option__onetime,
+                .rc-selection__onetime {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: auto !important;
+                }
             `;
             
             // Inject into shadow DOM
             shadowRoot.appendChild(style);
-            console.log('✅ CSS injected into Recharge shadow DOM');
+            console.log('✅ CSS injected to hide ONLY subscription in Recharge shadow DOM');
             return true;
         }
         return false;
@@ -9138,35 +9155,41 @@ function hideAfterCustomElementReady() {
     }
 }
 
-// Method 7: Force hide with all possible selectors
-function forceHideAllSubscriptionOptions() {
+// Method 7: Precisely target ONLY subscription div
+function forceHideOnlySubscription() {
     function hideInShadow() {
         const rechargeWidget = document.querySelector('recharge-subscription-widget');
         
         if (rechargeWidget && rechargeWidget.shadowRoot) {
             const shadowRoot = rechargeWidget.shadowRoot;
             
-            // Try multiple selectors
-            const selectors = [
-                '.rc-purchase-option__subscription',
-                '.rc-purchase-option.rc-purchase-option__subscription',
-                '[class*="subscription"]',
-                '[class*="rc-purchase-option"]:first-child',
-                'div:first-child'
-            ];
+            // ONLY target the subscription div specifically
+            const subscriptionDiv = shadowRoot.querySelector('.rc-purchase-option__subscription');
             
-            selectors.forEach(selector => {
-                const elements = shadowRoot.querySelectorAll(selector);
-                elements.forEach(el => {
-                    if (el.textContent.includes('Subscribe') || el.textContent.includes('Save')) {
-                        el.style.display = 'none';
-                        el.style.visibility = 'hidden';
-                        el.style.height = '0';
-                        el.style.overflow = 'hidden';
-                        console.log(`✅ Hidden element with selector: ${selector}`);
-                    }
-                });
-            });
+            if (subscriptionDiv) {
+                // Double-check it's the subscription option (not one-time)
+                const isSubscription = subscriptionDiv.textContent.includes('Subscribe') || 
+                                     subscriptionDiv.textContent.includes('Save') ||
+                                     subscriptionDiv.classList.contains('rc-purchase-option__subscription');
+                
+                if (isSubscription) {
+                    subscriptionDiv.style.display = 'none';
+                    subscriptionDiv.style.visibility = 'hidden';
+                    subscriptionDiv.style.height = '0';
+                    subscriptionDiv.style.overflow = 'hidden';
+                    console.log('✅ Hidden ONLY subscription div');
+                }
+            }
+            
+            // Make sure one-time option is visible
+            const onetimeDiv = shadowRoot.querySelector('.rc-purchase-option__onetime, .rc-selection__onetime');
+            if (onetimeDiv) {
+                onetimeDiv.style.display = '';
+                onetimeDiv.style.visibility = '';
+                onetimeDiv.style.height = '';
+                onetimeDiv.style.overflow = '';
+                console.log('✅ Ensured one-time option is visible');
+            }
         }
     }
     
@@ -9184,7 +9207,7 @@ console.log('🚀 Starting Recharge widget subscription hiding...');
 hideAfterCustomElementReady();
 
 // Backup: Force hide after a delay
-setTimeout(forceHideAllSubscriptionOptions, 2000);
+setTimeout(forceHideOnlySubscription, 2000);
 
 // Additional backup: Direct execution
 setTimeout(hideRechargeComprehensive, 100);
