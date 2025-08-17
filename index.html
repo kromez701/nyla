@@ -8952,217 +8952,198 @@ if (document.readyState === 'loading') {
 </script>
 
 <script>
-  // NUCLEAR OPTION - ONLY FOR FIRST ELEMENT (Subscribe & Save)
+  // ABSOLUTE NUCLEAR ANNIHILATION - FIRST DIV MUST DIE
 (function() {
     'use strict';
     
-    console.log("☢️ NUCLEAR TARGETING: FIRST ELEMENT ONLY");
+    console.log("🚀 LAUNCHING NUCLEAR STRIKE ON FIRST DIV");
     
-    // Method 1: Immediate CSS targeting ONLY first child
-    const style = document.createElement('style');
-    style.innerHTML = `
-        /* NUCLEAR CSS - Only target first child */
-        .rc-selection__root > div:first-child,
-        .rc-selection__root > .rc-purchase-option:first-child,
-        .rc-purchase-option:first-of-type {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
-            position: absolute !important;
-            left: -99999px !important;
-            z-index: -9999 !important;
-            pointer-events: none !important;
-        }
-        
-        /* Ensure second child (one-time) is always visible */
-        .rc-selection__root > div:nth-child(2),
-        .rc-selection__root > .rc-purchase-option:nth-child(2),
-        .rc-purchase-option:nth-of-type(2) {
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
-            position: relative !important;
-            left: auto !important;
-            height: auto !important;
-            width: auto !important;
-            z-index: auto !important;
-            pointer-events: auto !important;
-        }
+    // Method 1: IMMEDIATE CSS INJECTION - BEFORE ANYTHING LOADS
+    const nukeCSS = document.createElement('style');
+    nukeCSS.innerHTML = `
+        /* IMMEDIATE OBLITERATION */
+        .rc-selection__root > *:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
+        .rc-selection__root > div:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
+        .rc-selection__root > div:nth-child(1) { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
+        .rc-purchase-option:first-child { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
+        [rc-not-selected] { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
+        .rc-purchase-option__subscription { display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important; }
     `;
-    document.head.insertBefore(style, document.head.firstChild);
+    if (document.head) {
+        document.head.insertBefore(nukeCSS, document.head.firstChild);
+    } else {
+        document.documentElement.appendChild(nukeCSS);
+    }
     
-    // Method 2: Aggressive first element elimination
-    function nukeFirstElementOnly() {
-        console.log("💣 TARGETING FIRST ELEMENT ONLY...");
+    // Method 2: SCORCHED EARTH FUNCTION
+    function scorchedEarth() {
+        console.log("🔥 SCORCHED EARTH PROTOCOL ACTIVATED");
         
-        let destroyed = 0;
+        let nuked = 0;
         
-        // Target 1: First child of rc-selection__root
+        // NUKE 1: First child of parent
         const parent = document.querySelector('.rc-selection__root');
-        if (parent && parent.children.length >= 1) {
-            const firstChild = parent.children[0];
-            console.log("🎯 Found first child:", firstChild);
-            
-            // Multiple destruction methods
-            firstChild.style.display = 'none';
-            firstChild.style.visibility = 'hidden';
-            firstChild.style.opacity = '0';
-            firstChild.style.height = '0';
-            firstChild.style.width = '0';
-            firstChild.style.position = 'absolute';
-            firstChild.style.left = '-99999px';
-            firstChild.style.zIndex = '-9999';
-            firstChild.setAttribute('hidden', 'true');
-            firstChild.setAttribute('aria-hidden', 'true');
-            
-            // Complete removal
-            firstChild.remove();
-            destroyed++;
-            console.log("💥 FIRST ELEMENT DESTROYED");
+        if (parent) {
+            const children = Array.from(parent.children);
+            if (children.length > 0) {
+                const firstChild = children[0];
+                console.log("☢️ NUKING FIRST CHILD:", firstChild);
+                
+                // TOTAL ANNIHILATION
+                firstChild.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important; top: -999999px !important; z-index: -999999 !important; pointer-events: none !important; overflow: hidden !important;';
+                firstChild.setAttribute('hidden', 'hidden');
+                firstChild.setAttribute('aria-hidden', 'true');
+                firstChild.setAttribute('style', 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;');
+                firstChild.className += ' NUKED-ELEMENT';
+                
+                // PHYSICAL REMOVAL
+                try { firstChild.remove(); } catch(e) {}
+                try { firstChild.parentNode.removeChild(firstChild); } catch(e) {}
+                
+                nuked++;
+            }
         }
         
-        // Target 2: Elements containing "Subscribe & save" but NOT "One-time"
-        document.querySelectorAll('div').forEach((div, index) => {
-            const html = div.innerHTML || '';
-            const text = div.textContent || '';
+        // NUKE 2: All selectors
+        const selectors = [
+            '.rc-purchase-option__subscription',
+            '.rc-purchase-option.rc-purchase-option__subscription',
+            '[rc-not-selected]',
+            '[rc-not-selected=""]',
+            '.rc-purchase-option:first-child',
+            '.rc-selection__root > div:first-child',
+            '.rc-selection__root > *:first-child'
+        ];
+        
+        selectors.forEach(selector => {
+            try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(el => {
+                    console.log(`☢️ NUKING BY SELECTOR ${selector}:`, el);
+                    el.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;';
+                    try { el.remove(); } catch(e) {}
+                    try { el.parentNode.removeChild(el); } catch(e) {}
+                    nuked++;
+                });
+            } catch(e) {}
+        });
+        
+        // NUKE 3: Content-based destruction
+        const allElements = document.getElementsByTagName('*');
+        Array.from(allElements).forEach(el => {
+            const html = el.innerHTML || '';
+            const text = el.textContent || '';
             
             if ((html.includes('Subscribe &amp; save') || 
                  html.includes('Save up to 15%') ||
-                 text.includes('Subscribe & save') ||
-                 text.includes('Save up to 15%')) &&
+                 text.includes('Subscribe') ||
+                 text.includes('Save up to')) &&
                 !html.includes('One-time') &&
                 !text.includes('One-time')) {
                 
-                console.log(`💥 Destroying subscribe element ${index}:`, div);
-                
-                // Nuclear destruction
-                div.style.display = 'none';
-                div.style.visibility = 'hidden';
-                div.style.opacity = '0';
-                div.style.height = '0';
-                div.style.width = '0';
-                div.style.position = 'absolute';
-                div.style.left = '-99999px';
-                div.remove();
-                destroyed++;
+                console.log("☢️ NUKING BY CONTENT:", el);
+                el.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; height: 0 !important; width: 0 !important; position: absolute !important; left: -999999px !important;';
+                try { el.remove(); } catch(e) {}
+                try { el.parentNode.removeChild(el); } catch(e) {}
+                nuked++;
             }
         });
         
-        // Target 3: rc-not-selected attribute (first element marker)
-        const notSelected = document.querySelectorAll('[rc-not-selected]');
-        notSelected.forEach(el => {
-            console.log("💥 Destroying rc-not-selected:", el);
-            el.style.display = 'none';
-            el.remove();
-            destroyed++;
-        });
-        
-        // Target 4: First .rc-purchase-option
-        const firstPurchaseOption = document.querySelector('.rc-purchase-option');
-        if (firstPurchaseOption) {
-            const html = firstPurchaseOption.innerHTML || '';
-            // Only destroy if it's the subscribe option
-            if (html.includes('Subscribe') || html.includes('Save up to')) {
-                console.log("💥 Destroying first purchase option:", firstPurchaseOption);
-                firstPurchaseOption.style.display = 'none';
-                firstPurchaseOption.remove();
-                destroyed++;
-            }
-        }
-        
-        console.log(`☢️ DESTRUCTION COMPLETE: ${destroyed} elements eliminated`);
-        return destroyed;
+        console.log(`☢️ NUCLEAR STRIKE COMPLETE: ${nuked} TARGETS ELIMINATED`);
+        return nuked;
     }
     
-    // Method 3: Continuous obliteration
-    nukeFirstElementOnly();
+    // Method 3: IMMEDIATE EXECUTION
+    scorchedEarth();
     
-    // Rapid-fire execution
-    [1, 5, 10, 25, 50, 100, 200, 500, 1000, 2000].forEach(delay => {
-        setTimeout(nukeFirstElementOnly, delay);
+    // Method 4: RAPID BOMBARDMENT
+    for(let i = 0; i < 100; i++) {
+        setTimeout(scorchedEarth, i);
+    }
+    
+    // Method 5: CONTINUOUS BOMBARDMENT
+    [1,2,3,4,5,10,15,20,25,50,75,100,150,200,300,500,750,1000,1500,2000,3000,5000].forEach(delay => {
+        setTimeout(scorchedEarth, delay);
     });
     
-    // Method 4: Mutation observer - destroy on sight
-    const observer = new MutationObserver(function(mutations) {
-        let foundTarget = false;
-        
-        mutations.forEach(mutation => {
-            mutation.addedNodes.forEach(node => {
-                if (node.nodeType === 1) { // Element
-                    // Check if it's a subscribe element
-                    const html = node.innerHTML || '';
-                    const text = node.textContent || '';
-                    
-                    if (html.includes('Subscribe') || 
-                        html.includes('Save up to') ||
-                        node.hasAttribute('rc-not-selected')) {
-                        foundTarget = true;
-                    }
-                    
-                    // Check children too
-                    if (node.querySelector) {
-                        const subscribeChild = node.querySelector('[rc-not-selected], *:contains("Subscribe")');
-                        if (subscribeChild) {
-                            foundTarget = true;
-                        }
-                    }
-                }
-            });
-        });
-        
-        if (foundTarget) {
-            console.log("🚨 SUBSCRIBE ELEMENT DETECTED - ENGAGING DESTRUCTION");
-            setTimeout(nukeFirstElementOnly, 1);
-        }
+    // Method 6: MUTATION INTERCEPTOR
+    const nuclearObserver = new MutationObserver(function(mutations) {
+        console.log("🚨 MUTATION DETECTED - LAUNCHING COUNTER-STRIKE");
+        scorchedEarth();
+        setTimeout(scorchedEarth, 1);
+        setTimeout(scorchedEarth, 10);
     });
     
-    observer.observe(document.documentElement, {
+    nuclearObserver.observe(document.documentElement, {
         childList: true,
         subtree: true,
         attributes: true,
-        attributeOldValue: true
+        attributeOldValue: true,
+        characterData: true
     });
     
-    // Method 5: Interceptor - prevent subscribe elements from appearing
-    const originalAppendChild = Node.prototype.appendChild;
-    Node.prototype.appendChild = function(child) {
-        if (child.nodeType === 1) { // Element
-            const html = child.innerHTML || '';
-            const text = child.textContent || '';
-            
-            if ((html.includes('Subscribe') || 
-                 html.includes('Save up to') ||
-                 child.hasAttribute('rc-not-selected')) &&
-                !html.includes('One-time')) {
-                console.log("🛡️ INTERCEPTED SUBSCRIBE ELEMENT - BLOCKING");
-                return child; // Don't actually append
-            }
+    // Method 7: FUNCTION OVERRIDES
+    const originalCreateElement = document.createElement;
+    document.createElement = function(tagName) {
+        const element = originalCreateElement.call(this, tagName);
+        
+        // Intercept any new divs
+        if (tagName.toLowerCase() === 'div') {
+            setTimeout(() => {
+                const html = element.innerHTML || '';
+                if (html.includes('Subscribe') || element.hasAttribute('rc-not-selected')) {
+                    console.log("🛡️ INTERCEPTED SUBSCRIBE ELEMENT CREATION");
+                    element.style.display = 'none';
+                    try { element.remove(); } catch(e) {}
+                }
+            }, 1);
         }
-        return originalAppendChild.call(this, child);
+        
+        return element;
     };
     
-    // Method 6: Interval destroyer
-    const destroyerInterval = setInterval(() => {
-        const subscribeElements = document.querySelectorAll('[rc-not-selected], .rc-selection__root > div:first-child');
-        if (subscribeElements.length > 0) {
-            console.log(`🔄 Found ${subscribeElements.length} subscribe survivors - ELIMINATING`);
-            nukeFirstElementOnly();
+    // Method 8: PROPERTY HIJACKING
+    Object.defineProperty(HTMLElement.prototype, 'style', {
+        get: function() {
+            return this._style || (this._style = {});
+        },
+        set: function(value) {
+            if (this.hasAttribute('rc-not-selected') || 
+                this.classList.contains('rc-purchase-option__subscription')) {
+                console.log("🛡️ HIJACKED STYLE CHANGE - BLOCKING");
+                this._style = { display: 'none' };
+                return;
+            }
+            this._style = value;
         }
-    }, 50);
+    });
     
-    // Stop after 1 minute
+    // Method 9: EXTREME MONITORING
+    const extremeInterval = setInterval(() => {
+        const survivors = document.querySelectorAll('[rc-not-selected], .rc-purchase-option__subscription, .rc-selection__root > *:first-child');
+        if (survivors.length > 0) {
+            console.log(`🚨 ${survivors.length} SURVIVORS DETECTED - LAUNCHING PRECISION STRIKE`);
+            survivors.forEach(survivor => {
+                console.log("🎯 ELIMINATING SURVIVOR:", survivor);
+                survivor.style.cssText = 'display: none !important;';
+                try { survivor.remove(); } catch(e) {}
+            });
+            scorchedEarth();
+        }
+    }, 10); // Every 10ms!
+    
+    // Stop extreme monitoring after 2 minutes
     setTimeout(() => {
-        clearInterval(destroyerInterval);
-        console.log("☢️ MISSION COMPLETE - Subscribe element should be eliminated");
-    }, 60000);
+        clearInterval(extremeInterval);
+        console.log("☢️ NUCLEAR MISSION ACCOMPLISHED");
+    }, 120000);
     
-    // Method 7: Event-based destruction
-    document.addEventListener('DOMContentLoaded', nukeFirstElementOnly);
-    window.addEventListener('load', nukeFirstElementOnly);
+    // Method 10: EVENT LISTENERS
+    ['DOMContentLoaded', 'load', 'readystatechange'].forEach(event => {
+        document.addEventListener(event, scorchedEarth);
+    });
     
-    console.log("☢️ NUCLEAR SCRIPT ARMED - FIRST ELEMENT WILL BE OBLITERATED");
+    console.log("☢️ NUCLEAR ARSENAL DEPLOYED - FIRST DIV WILL BE OBLITERATED");
 })();
 </script>
 </html>
