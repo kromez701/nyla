@@ -7555,6 +7555,16 @@ window.addEventListener('load', () => {
 </script>
 
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const subscribediv = document.querySelector(".rc-purchase-option.rc-purchase-option__subscription")
+    console.log("subscriber div", subscribediv)
+    if (subscribediv){
+      subscribediv.style.display = "none"
+    }
+  })
+</script>
+
+<script>
 
 // Enhanced Silvervine Sticks Variant-based URL redirect and price management system
 // Now includes Subscribe & Save and One-time purchase options
@@ -8174,5 +8184,6 @@ if (document.readyState === 'loading') {
 // console.log('Current purchase type:', window.silvervineVariantManager.detectPurchaseType());
 
 </script>
+
 
 </html>
