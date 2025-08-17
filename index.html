@@ -8503,6 +8503,7 @@ class SilvervineVariantManager {
         
         // Target the specific Recharge widget subscription purchase option
         const subscriptionPurchaseOption = document.querySelector('.rc-purchase-option__subscription, .rc-selection__subscription');
+        console.log("sub:", subscriptionPurchaseOption)
         if (subscriptionPurchaseOption) {
             const subscriptionPriceElement = subscriptionPurchaseOption.querySelector('.rc-price');
             if (subscriptionPriceElement) {
