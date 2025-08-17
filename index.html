@@ -8955,241 +8955,130 @@ if (document.readyState === 'loading') {
 </script>
 
 <script>
-  // DIAGNOSTIC + ULTIMATE DESTRUCTION
-(function() {
-    'use strict';
-    
-    console.log("🔍 DIAGNOSTIC MODE + ULTIMATE DESTRUCTION");
-    
-    // First, let's see exactly what we're dealing with
-    function fullDiagnostic() {
-        console.log("=== FULL DIAGNOSTIC REPORT ===");
-        
-        const parent = document.querySelector('.rc-selection__root');
-        console.log("Parent found:", !!parent);
-        
-        if (parent) {
-            console.log("Parent element:", parent);
-            console.log("Parent HTML:", parent.outerHTML);
-            console.log("Children count:", parent.children.length);
-            
-            Array.from(parent.children).forEach((child, i) => {
-                console.log(`--- CHILD ${i} ---`);
-                console.log("Element:", child);
-                console.log("TagName:", child.tagName);
-                console.log("ClassName:", child.className);
-                console.log("ID:", child.id);
-                console.log("Attributes:", Array.from(child.attributes).map(attr => `${attr.name}="${attr.value}"`));
-                console.log("InnerText:", child.innerText?.substring(0, 100));
-                console.log("Computed style display:", window.getComputedStyle(child).display);
-                console.log("Computed style visibility:", window.getComputedStyle(child).visibility);
-                console.log("OffsetWidth:", child.offsetWidth);
-                console.log("OffsetHeight:", child.offsetHeight);
-                console.log("HTML:", child.outerHTML.substring(0, 300));
-            });
-        }
-        
-        // Check all possible selectors
-        const selectors = [
-            '.rc-purchase-option__subscription',
-            '.rc-purchase-option',
-            '[rc-not-selected]',
-            '[class*="subscription"]',
-            '[part*="subscription"]'
-        ];
-        
-        selectors.forEach(sel => {
-            const elements = document.querySelectorAll(sel);
-            console.log(`Selector "${sel}" found ${elements.length} elements:`, elements);
-        });
+  // Method 1: Target by class and hide first occurrence
+function hideSubscriptionOption() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.style.display = 'none';
     }
-    
-    // Run diagnostic immediately
-    fullDiagnostic();
-    
-    // Ultimate destruction function
-    function ultimateDestruction() {
-        console.log("💀 ULTIMATE DESTRUCTION PROTOCOL");
-        
-        const parent = document.querySelector('.rc-selection__root');
-        if (!parent) {
-            console.log("❌ No parent found");
-            return;
+}
+
+// Method 2: Target first child of container
+function hideFirstDivInContainer() {
+    const container = document.querySelector('.rc-selection__root');
+    if (container) {
+        const firstDiv = container.querySelector('div:first-of-type');
+        if (firstDiv) {
+            firstDiv.style.display = 'none';
         }
-        
-        const children = Array.from(parent.children);
-        console.log(`Found ${children.length} children`);
-        
-        if (children.length > 0) {
-            const firstChild = children[0];
-            console.log("🎯 Targeting first child:", firstChild);
-            
-            // METHOD 1: Style obliteration
-            const destructiveStyle = `
-                display: none !important;
-                visibility: hidden !important;
-                opacity: 0 !important;
-                height: 0px !important;
-                width: 0px !important;
-                max-height: 0px !important;
-                max-width: 0px !important;
-                min-height: 0px !important;
-                min-width: 0px !important;
-                position: absolute !important;
-                left: -99999px !important;
-                top: -99999px !important;
-                z-index: -99999 !important;
-                overflow: hidden !important;
-                pointer-events: none !important;
-                user-select: none !important;
-                transform: scale(0) !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                border: none !important;
-                outline: none !important;
-            `;
-            
-            firstChild.style.cssText = destructiveStyle;
-            firstChild.setAttribute('style', destructiveStyle);
-            
-            // METHOD 2: Attribute destruction
-            firstChild.setAttribute('hidden', 'hidden');
-            firstChild.setAttribute('aria-hidden', 'true');
-            firstChild.setAttribute('data-destroyed', 'true');
-            
-            // METHOD 3: Class destruction
-            firstChild.className = 'DESTROYED-ELEMENT';
-            
-            // METHOD 4: Content destruction
-            const originalHTML = firstChild.innerHTML;
-            firstChild.innerHTML = '<!-- DESTROYED -->';
-            
-            // METHOD 5: Event blocking
-            firstChild.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }, true);
-            
-            // METHOD 6: Property overrides
-            try {
-                Object.defineProperty(firstChild, 'offsetWidth', { get: () => 0 });
-                Object.defineProperty(firstChild, 'offsetHeight', { get: () => 0 });
-                Object.defineProperty(firstChild, 'clientWidth', { get: () => 0 });
-                Object.defineProperty(firstChild, 'clientHeight', { get: () => 0 });
-            } catch(e) {}
-            
-            // METHOD 7: Physical removal (try multiple approaches)
-            setTimeout(() => {
-                try {
-                    firstChild.remove();
-                    console.log("✅ Removed with .remove()");
-                } catch(e) {
-                    console.log("❌ .remove() failed:", e);
-                }
-            }, 10);
-            
-            setTimeout(() => {
-                try {
-                    if (firstChild.parentNode) {
-                        firstChild.parentNode.removeChild(firstChild);
-                        console.log("✅ Removed with removeChild()");
-                    }
-                } catch(e) {
-                    console.log("❌ removeChild() failed:", e);
-                }
-            }, 20);
-            
-            setTimeout(() => {
-                try {
-                    parent.removeChild(firstChild);
-                    console.log("✅ Removed directly from parent");
-                } catch(e) {
-                    console.log("❌ Direct removal failed:", e);
-                }
-            }, 30);
-            
-            // METHOD 8: Replace with empty element
-            setTimeout(() => {
-                try {
-                    const emptyDiv = document.createElement('div');
-                    emptyDiv.style.display = 'none';
-                    parent.replaceChild(emptyDiv, firstChild);
-                    console.log("✅ Replaced with empty element");
-                } catch(e) {
-                    console.log("❌ Replace failed:", e);
-                }
-            }, 40);
-            
-            console.log("💀 DESTRUCTION COMPLETE");
-        }
-        
-        // Run diagnostic after destruction
-        setTimeout(fullDiagnostic, 100);
     }
-    
-    // Super aggressive CSS injection
-    const superCSS = document.createElement('style');
-    superCSS.innerHTML = `
-        .rc-selection__root > *:first-child,
-        .rc-selection__root > div:first-child,
-        .rc-selection__root > div:nth-child(1) {
+}
+
+// Method 3: More aggressive approach with multiple CSS properties
+function forceHideSubscription() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.style.display = 'none';
+        subscriptionDiv.style.visibility = 'hidden';
+        subscriptionDiv.style.opacity = '0';
+        subscriptionDiv.style.height = '0';
+        subscriptionDiv.style.overflow = 'hidden';
+        subscriptionDiv.setAttribute('hidden', 'true');
+    }
+}
+
+// Method 4: Use CSS class approach
+function hideWithCSSClass() {
+    // First add CSS rule
+    const style = document.createElement('style');
+    style.textContent = `
+        .hidden-subscription {
             display: none !important;
             visibility: hidden !important;
             opacity: 0 !important;
             height: 0 !important;
-            width: 0 !important;
-            position: fixed !important;
-            left: -99999px !important;
-            top: -99999px !important;
-            z-index: -99999 !important;
-            transform: scale(0) !important;
-            pointer-events: none !important;
             overflow: hidden !important;
         }
     `;
-    document.head.insertBefore(superCSS, document.head.firstChild);
+    document.head.appendChild(style);
     
-    // Execute destruction multiple times
-    ultimateDestruction();
-    
-    [10, 50, 100, 200, 500, 1000, 2000, 3000, 5000].forEach(delay => {
-        setTimeout(() => {
-            console.log(`🔄 Destruction attempt at ${delay}ms`);
-            ultimateDestruction();
-        }, delay);
+    // Then apply the class
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.classList.add('hidden-subscription');
+    }
+}
+
+// Method 5: Remove element completely
+function removeSubscriptionOption() {
+    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+    if (subscriptionDiv) {
+        subscriptionDiv.remove();
+    }
+}
+
+// Method 6: Observer pattern for dynamic content
+function hideSubscriptionWithObserver() {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+                if (subscriptionDiv && subscriptionDiv.style.display !== 'none') {
+                    subscriptionDiv.style.display = 'none';
+                    subscriptionDiv.style.visibility = 'hidden';
+                }
+            }
+        });
     });
     
-    // Continuous monitoring with detailed logging
-    const monitorInterval = setInterval(() => {
-        const parent = document.querySelector('.rc-selection__root');
-        if (parent && parent.children.length > 0) {
-            const firstChild = parent.children[0];
-            const computedStyle = window.getComputedStyle(firstChild);
-            
-            if (computedStyle.display !== 'none' || firstChild.offsetWidth > 0 || firstChild.offsetHeight > 0) {
-                console.log("🚨 FIRST ELEMENT STILL VISIBLE!");
-                console.log("Display:", computedStyle.display);
-                console.log("Visibility:", computedStyle.visibility);
-                console.log("Opacity:", computedStyle.opacity);
-                console.log("Width:", firstChild.offsetWidth);
-                console.log("Height:", firstChild.offsetHeight);
-                console.log("Element:", firstChild);
-                
-                ultimateDestruction();
-            }
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // Also hide immediately if it exists
+    forceHideSubscription();
+}
+
+// Method 7: Interval-based approach (if content loads dynamically)
+function hideWithInterval() {
+    const hideInterval = setInterval(() => {
+        const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
+        if (subscriptionDiv) {
+            subscriptionDiv.style.display = 'none';
+            subscriptionDiv.style.visibility = 'hidden';
+            // Optional: clear interval after successful hide
+            // clearInterval(hideInterval);
         }
-    }, 100);
+    }, 100); // Check every 100ms
     
-    // Stop monitoring after 1 minute
-    setTimeout(() => {
-        clearInterval(monitorInterval);
-        console.log("🔍 Final diagnostic:");
-        fullDiagnostic();
-    }, 60000);
-    
-    console.log("🔍 DIAGNOSTIC + DESTRUCTION SCRIPT LOADED");
-})();
+    // Clear interval after 10 seconds to avoid infinite checking
+    setTimeout(() => clearInterval(hideInterval), 10000);
+}
+
+// Execute methods
+// Try Method 1 first (simplest)
+hideSubscriptionOption();
+
+// If that doesn't work, try the more aggressive approach
+setTimeout(() => {
+    forceHideSubscription();
+}, 100);
+
+// For dynamic content, use the observer
+hideSubscriptionWithObserver();
+
+// Alternative: Run all methods in sequence with delays
+function hideAllMethods() {
+    hideSubscriptionOption();
+    setTimeout(hideFirstDivInContainer, 50);
+    setTimeout(forceHideSubscription, 100);
+    setTimeout(hideWithCSSClass, 150);
+    setTimeout(hideWithInterval, 200);
+}
+
+// Uncomment the line below to run all methods
+// hideAllMethods();
 </script>
 </html>
