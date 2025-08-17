@@ -8952,79 +8952,120 @@ if (document.readyState === 'loading') {
 </script>
 
 <script>
-
-// Method 1: Hide by class selector
-function hideSubscriptionOption() {
-    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
-    if (subscriptionDiv) {
-        subscriptionDiv.style.display = 'none';
-    }
-}
-
-// Method 2: More robust - hide all subscription options
-function hideAllSubscriptionOptions() {
-    const subscriptionDivs = document.querySelectorAll('.rc-purchase-option__subscription');
-    subscriptionDivs.forEach(div => {
-        div.style.display = 'none';
+  // AGGRESSIVE HIDING - Multiple selectors and methods
+function forceHideSubscriptionDiv() {
+    // Try multiple selectors to catch the div
+    const selectors = [
+        '.rc-purchase-option__subscription',
+        '.rc-purchase-option.rc-purchase-option__subscription',
+        'div[class*="subscription"]',
+        'div[part*="subscription"]',
+        'div:has(.rc-purchase-option__badge)',
+        'div:contains("Subscribe")',
+        'div:contains("Save up to 15%")'
+    ];
+    
+    selectors.forEach(selector => {
+        try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(el => {
+                if (el) {
+                    // Multiple hiding methods
+                    el.style.display = 'none';
+                    el.style.visibility = 'hidden';
+                    el.style.opacity = '0';
+                    el.style.height = '0';
+                    el.style.width = '0';
+                    el.style.overflow = 'hidden';
+                    el.style.position = 'absolute';
+                    el.style.left = '-9999px';
+                    el.setAttribute('hidden', 'true');
+                    el.setAttribute('aria-hidden', 'true');
+                    
+                    // Remove from layout completely
+                    el.remove();
+                }
+            });
+        } catch (e) {
+            // Ignore selector errors
+        }
+    });
+    
+    // Also target by content
+    const allDivs = document.querySelectorAll('div');
+    allDivs.forEach(div => {
+        if (div.innerHTML && div.innerHTML.includes('Subscribe &amp; save')) {
+            div.style.display = 'none';
+            div.remove();
+        }
     });
 }
 
-// Method 3: Using CSS visibility (keeps space but makes invisible)
-function makeSubscriptionInvisible() {
-    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
-    if (subscriptionDiv) {
-        subscriptionDiv.style.visibility = 'hidden';
-        subscriptionDiv.style.height = '0';
-        subscriptionDiv.style.overflow = 'hidden';
-    }
-}
-
-// Method 4: Remove from DOM entirely
-function removeSubscriptionOption() {
-    const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
-    if (subscriptionDiv) {
-        subscriptionDiv.remove();
-    }
-}
-
-// Method 5: Add CSS rule to hide it permanently
-function addCSSRuleToHideSubscription() {
+// Super aggressive CSS injection
+function injectAggressiveCSS() {
     const style = document.createElement('style');
     style.textContent = `
-        .rc-purchase-option__subscription {
+        .rc-purchase-option__subscription,
+        .rc-purchase-option.rc-purchase-option__subscription,
+        div[class*="subscription"],
+        div[part*="subscription"],
+        div:has(.rc-purchase-option__badge) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+            position: absolute !important;
+            left: -9999px !important;
+            pointer-events: none !important;
+        }
+        
+        /* Hide parent containers that might contain subscription */
+        .rc-selection__root > div:first-child {
             display: none !important;
         }
     `;
     document.head.appendChild(style);
 }
 
-// Execute when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Choose one of these methods:
-    hideSubscriptionOption(); // Recommended
+// Continuous monitoring and removal
+function startAggressiveMonitoring() {
+    // Run immediately
+    forceHideSubscriptionDiv();
+    injectAggressiveCSS();
     
-    // Or use the CSS method for permanent hiding:
-    // addCSSRuleToHideSubscription();
-});
-
-// If the content loads dynamically, use MutationObserver
-function observeAndHideSubscription() {
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList') {
-                const subscriptionDiv = document.querySelector('.rc-purchase-option__subscription');
-                if (subscriptionDiv) {
-                    subscriptionDiv.style.display = 'none';
-                }
-            }
-        });
+    // Set up multiple intervals
+    const intervals = [10, 50, 100, 500, 1000];
+    intervals.forEach(ms => {
+        setTimeout(() => {
+            forceHideSubscriptionDiv();
+        }, ms);
+        
+        setInterval(() => {
+            forceHideSubscriptionDiv();
+        }, ms);
+    });
+    
+    // MutationObserver for dynamic content
+    const observer = new MutationObserver(function() {
+        forceHideSubscriptionDiv();
     });
     
     observer.observe(document.body, {
         childList: true,
-        subtree: true
+        subtree: true,
+        attributes: true,
+        attributeOldValue: true
     });
 }
 
+// Execute immediately and on DOM ready
+startAggressiveMonitoring();
+
+document.addEventListener('DOMContentLoaded', startAggressiveMonitoring);
+
+// Backup - run after a delay
+setTimeout(startAggressiveMonitoring, 2000);
 </script>
 </html>
