@@ -9230,101 +9230,326 @@ setTimeout(hideRechargeComprehensive, 100);
 </script>
 
 <script>
+  // HIDE AFTERPAY ELEMENTS IN SHADOW DOM - COMPREHENSIVE APPROACH
 
-  // Function to hide afterpay-paragraph elements in shadow roots
-function hideAfterpayElements() {
-    // Find all elements that might have shadow roots
-    const allElements = document.querySelectorAll('*');
+// Method 1: PRECISELY target afterpay paragraph elements
+function hideAfterpayParagraph() {
+    const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
     
-    allElements.forEach(element => {
-        // Check if element has a shadow root
-        if (element.shadowRoot) {
-            // Query within the shadow root for afterpay-paragraph elements
-            const afterpayElements = element.shadowRoot.querySelectorAll('.afterpay-paragraph');
-            afterpayElements.forEach(afterpayEl => {
-                afterpayEl.style.display = 'none';
+    if (squarePlacement && squarePlacement.shadowRoot) {
+        // Access the shadow DOM
+        const shadowRoot = squarePlacement.shadowRoot;
+        
+        // Find the afterpay-paragraph elements
+        const afterpayParagraphs = shadowRoot.querySelectorAll('.afterpay-paragraph');
+        
+        if (afterpayParagraphs.length > 0) {
+            afterpayParagraphs.forEach(paragraph => {
+                paragraph.style.display = 'none';
+                paragraph.style.visibility = 'hidden';
+                paragraph.style.height = '0';
+                paragraph.style.overflow = 'hidden';
             });
+            console.log('✅ Hidden afterpay-paragraph elements in shadow DOM');
+            return true;
         }
+    }
+    return false;
+}
+
+// Method 2: Wait for widget to load and then hide
+function hideAfterpayWithDelay() {
+    function attemptHide() {
+        const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+        
+        if (squarePlacement && squarePlacement.shadowRoot) {
+            const shadowRoot = squarePlacement.shadowRoot;
+            const afterpayElements = shadowRoot.querySelectorAll('.afterpay-paragraph, [class*="afterpay"]');
+            
+            if (afterpayElements.length > 0) {
+                afterpayElements.forEach(element => {
+                    element.style.display = 'none';
+                    element.style.visibility = 'hidden';
+                    element.style.height = '0';
+                    element.style.overflow = 'hidden';
+                });
+                console.log('✅ Successfully hidden afterpay elements');
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Try immediately
+    if (attemptHide()) return;
+    
+    // Then try with increasing delays
+    const delays = [100, 500, 1000, 2000, 3000, 5000];
+    delays.forEach(delay => {
+        setTimeout(() => {
+            attemptHide();
+        }, delay);
     });
 }
 
-// Run the function immediately
-hideAfterpayElements();
-
-// Also observe for new elements being added to the DOM
-const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-        if (mutation.type === 'childList') {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === Node.ELEMENT_NODE) {
-                    // Check if the new node has a shadow root
-                    if (node.shadowRoot) {
-                        const afterpayElements = node.shadowRoot.querySelectorAll('.afterpay-paragraph');
-                        afterpayElements.forEach(afterpayEl => {
-                            afterpayEl.style.display = 'none';
-                        });
-                    }
+// Method 3: Use MutationObserver to watch for widget loading
+function hideAfterpayWithObserver() {
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+                
+                if (squarePlacement && squarePlacement.shadowRoot) {
+                    const shadowRoot = squarePlacement.shadowRoot;
+                    const afterpayElements = shadowRoot.querySelectorAll('.afterpay-paragraph, [class*="afterpay"]');
                     
-                    // Also check any child elements that might have shadow roots
-                    const childrenWithShadow = node.querySelectorAll('*');
-                    childrenWithShadow.forEach(child => {
-                        if (child.shadowRoot) {
-                            const afterpayElements = child.shadowRoot.querySelectorAll('.afterpay-paragraph');
-                            afterpayElements.forEach(afterpayEl => {
-                                afterpayEl.style.display = 'none';
-                            });
+                    afterpayElements.forEach(element => {
+                        if (element.style.display !== 'none') {
+                            element.style.display = 'none';
+                            element.style.visibility = 'hidden';
+                            element.style.height = '0';
+                            element.style.overflow = 'hidden';
+                            console.log('✅ Observer: Hidden afterpay element');
                         }
                     });
                 }
-            });
-        }
+            }
+        });
     });
-});
-
-// Start observing
-observer.observe(document.body, { childList: true, subtree: true });
-
-// Alternative approach using CSS injection into shadow roots
-function injectCSSIntoShadowRoots() {
-    const allElements = document.querySelectorAll('*');
     
-    allElements.forEach(element => {
-        if (element.shadowRoot) {
-            // Create a style element
-            const style = document.createElement('style');
-            style.textContent = '.afterpay-paragraph { display: none !important; }';
-            
-            // Inject the style into the shadow root
-            element.shadowRoot.appendChild(style);
-        }
+    // Start observing the document
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
     });
+    
+    // Also observe changes within the shadow root once it's available
+    function observeShadowRoot() {
+        const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+        if (squarePlacement && squarePlacement.shadowRoot) {
+            observer.observe(squarePlacement.shadowRoot, {
+                childList: true,
+                subtree: true
+            });
+            console.log('✅ Now observing shadow root for changes');
+        } else {
+            setTimeout(observeShadowRoot, 500);
+        }
+    }
+    
+    observeShadowRoot();
 }
 
-// Run CSS injection approach as well
-injectCSSIntoShadowRoots();
-
-// For debugging - log when afterpay elements are found and hidden
-function debugHideAfterpayElements() {
-    const allElements = document.querySelectorAll('*');
-    let found = 0;
+// Method 4: CSS injection for afterpay elements
+function hideAfterpayWithCSS() {
+    function injectCSS() {
+        const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+        
+        if (squarePlacement && squarePlacement.shadowRoot) {
+            const shadowRoot = squarePlacement.shadowRoot;
+            
+            // Create style element that targets afterpay elements
+            const style = document.createElement('style');
+            style.textContent = `
+                .afterpay-paragraph {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    height: 0 !important;
+                    overflow: hidden !important;
+                    max-height: 0 !important;
+                }
+                
+                [class*="afterpay"] {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    height: 0 !important;
+                    overflow: hidden !important;
+                }
+                
+                /* Also hide any payment messaging */
+                [data-testid*="afterpay"],
+                [data-testid*="payment"],
+                .payment-messaging {
+                    display: none !important;
+                    visibility: hidden !important;
+                }
+            `;
+            
+            // Inject into shadow DOM
+            shadowRoot.appendChild(style);
+            console.log('✅ CSS injected to hide afterpay elements in shadow DOM');
+            return true;
+        }
+        return false;
+    }
     
-    allElements.forEach(element => {
-        if (element.shadowRoot) {
-            const afterpayElements = element.shadowRoot.querySelectorAll('.afterpay-paragraph');
-            if (afterpayElements.length > 0) {
-                console.log(`Found ${afterpayElements.length} afterpay-paragraph elements in shadow root of:`, element);
-                found += afterpayElements.length;
-                afterpayElements.forEach(afterpayEl => {
-                    afterpayEl.style.display = 'none';
+    // Try multiple times
+    if (!injectCSS()) {
+        setTimeout(injectCSS, 500);
+        setTimeout(injectCSS, 1000);
+        setTimeout(injectCSS, 2000);
+        setTimeout(injectCSS, 3000);
+    }
+}
+
+// Method 5: Hide the entire square-placement element as fallback
+function hideEntireSquarePlacement() {
+    const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+    if (squarePlacement) {
+        squarePlacement.style.display = 'none';
+        squarePlacement.style.visibility = 'hidden';
+        squarePlacement.style.height = '0';
+        squarePlacement.style.overflow = 'hidden';
+        console.log('✅ Hidden entire square-placement element');
+        return true;
+    }
+    return false;
+}
+
+// Method 6: Comprehensive approach - try all methods
+function hideAfterpayComprehensive() {
+    console.log('🔍 Starting comprehensive Afterpay element hiding...');
+    
+    // Method 1: Immediate attempt
+    hideAfterpayParagraph();
+    
+    // Method 2: Delayed attempts
+    hideAfterpayWithDelay();
+    
+    // Method 3: CSS injection
+    hideAfterpayWithCSS();
+    
+    // Method 4: Observer
+    hideAfterpayWithObserver();
+    
+    // Method 5: Fallback - hide entire element
+    setTimeout(hideEntireSquarePlacement, 1000);
+    
+    // Method 6: Interval check (as backup)
+    const intervalId = setInterval(() => {
+        const squarePlacement = document.querySelector('square-placement[data-mpid*="afterpay"]');
+        
+        if (squarePlacement) {
+            // First try to hide just the paragraph elements
+            if (squarePlacement.shadowRoot) {
+                const afterpayElements = squarePlacement.shadowRoot.querySelectorAll('.afterpay-paragraph, [class*="afterpay"]');
+                
+                afterpayElements.forEach(element => {
+                    if (element.offsetHeight > 0 || element.offsetWidth > 0) {
+                        element.style.display = 'none';
+                        element.style.visibility = 'hidden';
+                        element.style.height = '0';
+                        element.style.overflow = 'hidden';
+                        console.log('✅ Interval: Re-hidden afterpay element');
+                    }
                 });
             }
+            
+            // If shadow root is closed or elements persist, hide entire widget
+            if (squarePlacement.offsetHeight > 0) {
+                squarePlacement.style.display = 'none';
+                squarePlacement.style.visibility = 'hidden';
+                console.log('✅ Interval: Hidden entire square-placement');
+            }
         }
-    });
+    }, 1000);
     
-    console.log(`Total afterpay-paragraph elements hidden: ${found}`);
+    // Clear interval after 30 seconds
+    setTimeout(() => clearInterval(intervalId), 30000);
 }
 
-// Uncomment the line below if you want debug logging
-// debugHideAfterpayElements();
+// Method 7: Wait for custom element to be fully defined
+function hideAfterCustomElementReady() {
+    if (customElements.get('square-placement')) {
+        // Element is already defined
+        hideAfterpayComprehensive();
+    } else {
+        // Wait for element to be defined
+        customElements.whenDefined('square-placement').then(() => {
+            console.log('✅ Square-placement widget is now defined');
+            setTimeout(hideAfterpayComprehensive, 100);
+        }).catch(() => {
+            // If custom element isn't defined, just run comprehensive
+            setTimeout(hideAfterpayComprehensive, 2000);
+        });
+    }
+}
+
+// Method 8: Force hide with multiple selectors
+function forceHideAfterpayElements() {
+    function hideAllAfterpayVariants() {
+        // Try all possible selectors for square-placement
+        const selectors = [
+            'square-placement[data-mpid*="afterpay"]',
+            'square-placement[id*="afterpay"]',
+            'square-placement[data-consumer-locale]',
+            'square-placement',
+            '[id*="placement-ANitLWXFTTWdWcExNT"]'
+        ];
+        
+        selectors.forEach(selector => {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                // Hide the element itself
+                element.style.display = 'none';
+                element.style.visibility = 'hidden';
+                element.style.height = '0';
+                element.style.overflow = 'hidden';
+                
+                // Also try to hide content in shadow root
+                if (element.shadowRoot) {
+                    const shadowElements = element.shadowRoot.querySelectorAll('.afterpay-paragraph, [class*="afterpay"], [data-testid*="afterpay"]');
+                    shadowElements.forEach(shadowEl => {
+                        shadowEl.style.display = 'none';
+                        shadowEl.style.visibility = 'hidden';
+                    });
+                }
+                
+                console.log('✅ Force hidden element:', selector);
+            });
+        });
+    }
+    
+    // Try multiple times
+    hideAllAfterpayVariants();
+    setTimeout(hideAllAfterpayVariants, 500);
+    setTimeout(hideAllAfterpayVariants, 1500);
+    setTimeout(hideAllAfterpayVariants, 3000);
+    setTimeout(hideAllAfterpayVariants, 5000);
+}
+
+// EXECUTE THE SOLUTION
+console.log('🚀 Starting Afterpay element hiding...');
+
+// Use the comprehensive approach
+hideAfterCustomElementReady();
+
+// Backup: Force hide after a delay
+setTimeout(forceHideAfterpayElements, 1000);
+
+// Additional backup: Direct execution
+setTimeout(hideAfterpayComprehensive, 100);
+
+// Nuclear option: Global CSS injection
+setTimeout(() => {
+    const globalStyle = document.createElement('style');
+    globalStyle.textContent = `
+        square-placement,
+        [id*="afterpay"],
+        [class*="afterpay"],
+        [data-mpid*="afterpay"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+        }
+    `;
+    document.head.appendChild(globalStyle);
+    console.log('✅ Nuclear option: Global CSS injected');
+}, 2000);
 </script>
 </html>
