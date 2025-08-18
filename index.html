@@ -816,6 +816,22 @@ await import("//nylatails.com/cdn/shopifycloud/shop-js/modules/v2/chunk.common_z
   data-shs="true"
   data-shs-beacon="false"
 ></script>
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1497972024708962');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1497972024708962&ev=PageView&noscript=1"
+/></noscript>
+
 </head>
 
   <body class="gradient link-btns--arrow action-btns--center">
@@ -8229,9 +8245,9 @@ class SilvervineVariantManager {
         this.variantUrls = {
             // One-time purchases
             onetime: {
-                '41858290679865': 'https://example.com/3pc-2free-onetime-checkout', // 3 Pc + 2 FREE One-time
-                '43418249986105': 'https://example.com/2pc-onetime-checkout',        // 2 Pc One-time
-                '43418250018873': 'https://example.com/1pc-onetime-checkout'         // 1 Pc One-time
+                '41858290679865': 'https://n2kzpa-uw.myshopify.com/cart/52260081992013:1', // 3 Pc + 2 FREE One-time
+                '43418249986105': 'https://n2kzpa-uw.myshopify.com/cart/52260082024781:1',        // 2 Pc One-time
+                '43418250018873': 'https://n2kzpa-uw.myshopify.com/cart/52260082057549:1'         // 1 Pc One-time
             },
             // Subscription purchases
             subscription: {
@@ -8243,9 +8259,9 @@ class SilvervineVariantManager {
         
         // Custom price mapping for one-time purchases
         this.onetimePriceMapping = {
-            '41858290679865': '£29.95', // 3 Pc + 2 FREE
-            '43418249986105': '£39.95', // 2 Pc
-            '43418250018873': '£49.99'  // 1 Pc
+            '41858290679865': '£69.99', // 3 Pc + 2 FREE
+            '43418249986105': '£49.99', // 2 Pc
+            '43418250018873': '£29.99'  // 1 Pc
         };
         
         // Custom price mapping for subscriptions (with discount)
@@ -9211,5 +9227,104 @@ setTimeout(forceHideOnlySubscription, 2000);
 
 // Additional backup: Direct execution
 setTimeout(hideRechargeComprehensive, 100);
+</script>
+
+<script>
+
+  // Function to hide afterpay-paragraph elements in shadow roots
+function hideAfterpayElements() {
+    // Find all elements that might have shadow roots
+    const allElements = document.querySelectorAll('*');
+    
+    allElements.forEach(element => {
+        // Check if element has a shadow root
+        if (element.shadowRoot) {
+            // Query within the shadow root for afterpay-paragraph elements
+            const afterpayElements = element.shadowRoot.querySelectorAll('.afterpay-paragraph');
+            afterpayElements.forEach(afterpayEl => {
+                afterpayEl.style.display = 'none';
+            });
+        }
+    });
+}
+
+// Run the function immediately
+hideAfterpayElements();
+
+// Also observe for new elements being added to the DOM
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    // Check if the new node has a shadow root
+                    if (node.shadowRoot) {
+                        const afterpayElements = node.shadowRoot.querySelectorAll('.afterpay-paragraph');
+                        afterpayElements.forEach(afterpayEl => {
+                            afterpayEl.style.display = 'none';
+                        });
+                    }
+                    
+                    // Also check any child elements that might have shadow roots
+                    const childrenWithShadow = node.querySelectorAll('*');
+                    childrenWithShadow.forEach(child => {
+                        if (child.shadowRoot) {
+                            const afterpayElements = child.shadowRoot.querySelectorAll('.afterpay-paragraph');
+                            afterpayElements.forEach(afterpayEl => {
+                                afterpayEl.style.display = 'none';
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
+// Start observing
+observer.observe(document.body, { childList: true, subtree: true });
+
+// Alternative approach using CSS injection into shadow roots
+function injectCSSIntoShadowRoots() {
+    const allElements = document.querySelectorAll('*');
+    
+    allElements.forEach(element => {
+        if (element.shadowRoot) {
+            // Create a style element
+            const style = document.createElement('style');
+            style.textContent = '.afterpay-paragraph { display: none !important; }';
+            
+            // Inject the style into the shadow root
+            element.shadowRoot.appendChild(style);
+        }
+    });
+}
+
+// Run CSS injection approach as well
+injectCSSIntoShadowRoots();
+
+// For debugging - log when afterpay elements are found and hidden
+function debugHideAfterpayElements() {
+    const allElements = document.querySelectorAll('*');
+    let found = 0;
+    
+    allElements.forEach(element => {
+        if (element.shadowRoot) {
+            const afterpayElements = element.shadowRoot.querySelectorAll('.afterpay-paragraph');
+            if (afterpayElements.length > 0) {
+                console.log(`Found ${afterpayElements.length} afterpay-paragraph elements in shadow root of:`, element);
+                found += afterpayElements.length;
+                afterpayElements.forEach(afterpayEl => {
+                    afterpayEl.style.display = 'none';
+                });
+            }
+        }
+    });
+    
+    console.log(`Total afterpay-paragraph elements hidden: ${found}`);
+}
+
+// Uncomment the line below if you want debug logging
+// debugHideAfterpayElements();
 </script>
 </html>
